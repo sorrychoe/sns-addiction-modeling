@@ -1,5 +1,4 @@
 \documentclass[11pt]{article}
-
     \usepackage{kotex}
     \usepackage[breakable]{tcolorbox}
     \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
@@ -168,7 +167,7 @@
     \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
     % Document parameters
     % Document title
-    \title{Regression}
+    \title{sns\_addiction\_regression}
     
     
     
@@ -406,7 +405,9 @@ SNS 갈등 경험이 중독에 가장 유의미한 영향을 주는 것으로 �
 중독 수준이 높아질수록 해당 요인의 영향력이 감소하였으며, 수면 시간은
 중독 점수와 음의 상관이 존재함을 파악했다.
 
-    \section{Introduction}\label{introduction}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Introduction}\label{introduction}
 
 \subsection{Research Question}\label{research-question}
 
@@ -448,7 +449,9 @@ SNS 갈등 경험이 중독에 가장 유의미한 영향을 주는 것으로 �
 \end{Verbatim}
 \end{tcolorbox}
 
-    \section{Research Method}\label{research-method}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Research Method}\label{research-method}
 
 \subsection{Data}\label{data}
 
@@ -464,7 +467,7 @@ SNS 갈등 경험이 중독에 가장 유의미한 영향을 주는 것으로 �
   \item
     종속 변수: \texttt{Addicted\_Score} (소셜미디어 중독 점수)
   \item
-    주요 독립 변수: \texttt{Avg\_Daily\_Usage\_Hours},
+    독립 변수: \texttt{Avg\_Daily\_Usage\_Hours},
     \texttt{Sleep\_Hours\_Per\_Night}, \texttt{Mental\_Health\_Score},
     \texttt{Conflicts\_Over\_Social\_Media}, \texttt{Age} 등
   \end{itemize}
@@ -500,7 +503,9 @@ dtypes: float64(2), int64(5), object(6)
 memory usage: 71.7+ KB
     \end{Verbatim}
 
-    \subsection{Correlation Analysis}\label{correlation-analysis}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Correlation Analysis}\label{correlation-analysis}
 
 \begin{itemize}
 \tightlist
@@ -562,7 +567,9 @@ Addicted\_Score                                  0.933586        1.000000
 \end{Verbatim}
 \end{tcolorbox}
         
-    \subsection{OLS Regression}\label{ols-regression}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{OLS Regression}\label{ols-regression}
 
 \subsubsection{모델 1: 수치형 변수만 포함한
 회귀}\label{uxbaa8uxb378-1-uxc218uxce58uxd615-uxbcc0uxc218uxb9cc-uxd3ecuxd568uxd55c-uxd68cuxadc0}
@@ -627,6 +634,7 @@ Addicted\_Score                                  0.933586        1.000000
 \PY{n}{model2} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y2}\PY{p}{,} \PY{n}{X2}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
 
 \PY{n+nb}{print}\PY{p}{(}\PY{n}{model1}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{            }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{n}{model2}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
@@ -637,8 +645,8 @@ Addicted\_Score                                  0.933586        1.000000
 Dep. Variable:         Addicted\_Score   R-squared:                       0.945
 Model:                            OLS   Adj. R-squared:                  0.944
 Method:                 Least Squares   F-statistic:                     2380.
-Date:                Thu, 19 Jun 2025   Prob (F-statistic):               0.00
-Time:                        11:31:37   Log-Likelihood:                -306.26
+Date:                Fri, 20 Jun 2025   Prob (F-statistic):               0.00
+Time:                        13:11:25   Log-Likelihood:                -306.26
 No. Observations:                 705   AIC:                             624.5
 Df Residuals:                     699   BIC:                             651.9
 Df Model:                           5
@@ -671,9 +679,305 @@ Kurtosis:                       3.882   Cond. No.                         658.
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly
 specified.
+
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:         Addicted\_Score   R-squared:                       0.982
+Model:                            OLS   Adj. R-squared:                  0.978
+Method:                 Least Squares   F-statistic:                     240.4
+Date:                Fri, 20 Jun 2025   Prob (F-statistic):               0.00
+Time:                        13:11:25   Log-Likelihood:                 93.174
+No. Observations:                 705   AIC:                             77.65
+Df Residuals:                     573   BIC:                             679.3
+Df Model:                         131
+Covariance Type:            nonrobust
+================================================================================
+=============================
+                                                coef    std err          t
+P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------
+-----------------------------
+Intercept                                     9.3507      0.569     16.434
+0.000       8.233      10.468
+C(Gender)[T.Male]                            -0.0206      0.033     -0.633
+0.527      -0.085       0.043
+C(Academic\_Level)[T.High School]              0.3891      0.134      2.898
+0.004       0.125       0.653
+C(Academic\_Level)[T.Undergraduate]           -0.1196      0.049     -2.428
+0.015      -0.216      -0.023
+C(Country)[T.Albania]                        -0.2120      0.356     -0.595
+0.552      -0.911       0.487
+C(Country)[T.Andorra]                        -0.8408      0.398     -2.113
+0.035      -1.622      -0.059
+C(Country)[T.Argentina]                      -0.7674      0.397     -1.932
+0.054      -1.548       0.013
+C(Country)[T.Armenia]                         0.2418      0.372      0.651
+0.515      -0.488       0.972
+C(Country)[T.Australia]                      -0.2661      0.290     -0.917
+0.360      -0.836       0.304
+C(Country)[T.Austria]                        -0.0931      0.355     -0.262
+0.793      -0.791       0.605
+C(Country)[T.Azerbaijan]                     -0.1847      0.375     -0.493
+0.622      -0.921       0.552
+C(Country)[T.Bahamas]                        -0.1098      0.355     -0.309
+0.757      -0.807       0.587
+C(Country)[T.Bahrain]                        -0.0401      0.337     -0.119
+0.905      -0.701       0.621
+C(Country)[T.Bangladesh]                     -0.2091      0.293     -0.713
+0.476      -0.785       0.367
+C(Country)[T.Belarus]                        -0.0406      0.353     -0.115
+0.908      -0.734       0.653
+C(Country)[T.Belgium]                        -0.7351      0.397     -1.851
+0.065      -1.515       0.045
+C(Country)[T.Bhutan]                         -1.0479      0.413     -2.539
+0.011      -1.859      -0.237
+C(Country)[T.Bolivia]                         0.1017      0.336      0.303
+0.762      -0.558       0.761
+C(Country)[T.Bosnia]                          0.0772      0.335      0.231
+0.818      -0.580       0.735
+C(Country)[T.Brazil]                          0.1260      0.307      0.410
+0.682      -0.478       0.730
+C(Country)[T.Bulgaria]                        0.0314      0.353      0.089
+0.929      -0.662       0.725
+C(Country)[T.Canada]                         -0.1100      0.291     -0.378
+0.705      -0.681       0.461
+C(Country)[T.Chile]                           0.0080      0.337      0.024
+0.981      -0.653       0.669
+C(Country)[T.China]                          -0.1140      0.357     -0.320
+0.749      -0.814       0.586
+C(Country)[T.Colombia]                       -0.1785      0.374     -0.477
+0.633      -0.913       0.556
+C(Country)[T.Costa Rica]                     -0.6355      0.398     -1.598
+0.110      -1.416       0.145
+C(Country)[T.Croatia]                         0.0173      0.376      0.046
+0.963      -0.721       0.755
+C(Country)[T.Cyprus]                          0.7159      0.355      2.015
+0.044       0.018       1.414
+C(Country)[T.Czech Republic]                 -0.7033      0.455     -1.545
+0.123      -1.598       0.191
+C(Country)[T.Denmark]                        -0.5674      0.289     -1.963
+0.050      -1.135       0.000
+C(Country)[T.Ecuador]                         0.2463      0.373      0.661
+0.509      -0.486       0.979
+C(Country)[T.Egypt]                           0.7183      0.374      1.918
+0.056      -0.017       1.454
+C(Country)[T.Estonia]                        -0.0319      0.356     -0.090
+0.929      -0.731       0.667
+C(Country)[T.Finland]                        -0.3273      0.299     -1.095
+0.274      -0.914       0.260
+C(Country)[T.France]                         -0.3180      0.289     -1.100
+0.272      -0.886       0.250
+C(Country)[T.Georgia]                        -0.1780      0.353     -0.504
+0.615      -0.872       0.516
+C(Country)[T.Germany]                        -0.4435      0.290     -1.528
+0.127      -1.013       0.126
+C(Country)[T.Ghana]                          -0.5829      0.430     -1.357
+0.175      -1.427       0.261
+C(Country)[T.Greece]                         -0.3518      0.375     -0.939
+0.348      -1.088       0.384
+C(Country)[T.Hong Kong]                      -0.1772      0.374     -0.473
+0.636      -0.912       0.558
+C(Country)[T.Hungary]                        -0.0934      0.356     -0.262
+0.793      -0.793       0.606
+C(Country)[T.Iceland]                        -0.0594      0.355     -0.167
+0.867      -0.757       0.638
+C(Country)[T.India]                          -0.0243      0.288     -0.084
+0.933      -0.591       0.542
+C(Country)[T.Indonesia]                      -0.7948      0.372     -2.139
+0.033      -1.524      -0.065
+C(Country)[T.Iraq]                            0.0839      0.356      0.236
+0.814      -0.614       0.782
+C(Country)[T.Ireland]                        -0.2053      0.292     -0.703
+0.482      -0.779       0.368
+C(Country)[T.Israel]                          0.2136      0.378      0.566
+0.572      -0.528       0.955
+C(Country)[T.Italy]                          -0.2667      0.289     -0.924
+0.356      -0.834       0.300
+C(Country)[T.Jamaica]                        -0.5150      0.390     -1.322
+0.187      -1.280       0.250
+C(Country)[T.Japan]                          -0.5942      0.302     -1.964
+0.050      -1.188   -8.64e-05
+C(Country)[T.Jordan]                         -0.2826      0.375     -0.753
+0.452      -1.019       0.454
+C(Country)[T.Kazakhstan]                     -0.3910      0.431     -0.907
+0.365      -1.238       0.456
+C(Country)[T.Kenya]                          -0.1924      0.377     -0.510
+0.610      -0.934       0.549
+C(Country)[T.Kosovo]                         -0.7311      0.399     -1.831
+0.068      -1.516       0.053
+C(Country)[T.Kuwait]                         -1.2400      0.455     -2.726
+0.007      -2.134      -0.346
+C(Country)[T.Kyrgyzstan]                     -0.3387      0.378     -0.896
+0.370      -1.081       0.403
+C(Country)[T.Latvia]                         -1.0539      0.456     -2.313
+0.021      -1.949      -0.159
+C(Country)[T.Lebanon]                         0.2750      0.392      0.701
+0.483      -0.495       1.045
+C(Country)[T.Liechtenstein]                   0.2941      0.397      0.740
+0.459      -0.486       1.074
+C(Country)[T.Lithuania]                      -0.4192      0.377     -1.112
+0.267      -1.160       0.321
+C(Country)[T.Luxembourg]                     -1.0862      0.456     -2.384
+0.017      -1.981      -0.191
+C(Country)[T.Malaysia]                        0.0926      0.298      0.311
+0.756      -0.493       0.678
+C(Country)[T.Maldives]                        0.1774      0.293      0.605
+0.545      -0.398       0.753
+C(Country)[T.Malta]                          -0.1255      0.355     -0.354
+0.723      -0.822       0.571
+C(Country)[T.Mexico]                          0.0045      0.294      0.015
+0.988      -0.573       0.582
+C(Country)[T.Moldova]                        -0.1110      0.373     -0.297
+0.766      -0.845       0.623
+C(Country)[T.Monaco]                       4.051e-05      0.358      0.000
+1.000      -0.702       0.702
+C(Country)[T.Montenegro]                     -0.3181      0.376     -0.847
+0.397      -1.056       0.420
+C(Country)[T.Morocco]                        -0.1116      0.376     -0.297
+0.766      -0.849       0.626
+C(Country)[T.Nepal]                           0.0687      0.292      0.235
+0.814      -0.505       0.643
+C(Country)[T.Netherlands]                    -0.5555      0.298     -1.865
+0.063      -1.140       0.029
+C(Country)[T.New Zealand]                    -0.3966      0.301     -1.317
+0.188      -0.988       0.195
+C(Country)[T.Nigeria]                        -0.6951      0.372     -1.867
+0.062      -1.426       0.036
+C(Country)[T.North Macedonia]                 0.3890      0.435      0.893
+0.372      -0.466       1.244
+C(Country)[T.Norway]                         -0.2855      0.399     -0.715
+0.475      -1.069       0.498
+C(Country)[T.Oman]                            0.0234      0.374      0.063
+0.950      -0.712       0.759
+C(Country)[T.Pakistan]                       -0.3729      0.295     -1.266
+0.206      -0.951       0.206
+C(Country)[T.Panama]                         -0.3362      0.378     -0.891
+0.374      -1.078       0.405
+C(Country)[T.Paraguay]                       -0.2742      0.375     -0.731
+0.465      -1.011       0.462
+C(Country)[T.Peru]                           -0.1782      0.374     -0.477
+0.633      -0.912       0.555
+C(Country)[T.Philippines]                    -0.6004      0.429     -1.399
+0.162      -1.443       0.242
+C(Country)[T.Poland]                         -0.1304      0.292     -0.447
+0.655      -0.704       0.443
+C(Country)[T.Portugal]                       -0.2106      0.374     -0.564
+0.573      -0.944       0.523
+C(Country)[T.Qatar]                          -0.1934      0.375     -0.516
+0.606      -0.929       0.543
+C(Country)[T.Romania]                         0.1633      0.375      0.435
+0.663      -0.573       0.900
+C(Country)[T.Russia]                         -0.2039      0.299     -0.683
+0.495      -0.790       0.383
+C(Country)[T.San Marino]                      0.0751      0.355      0.211
+0.833      -0.623       0.773
+C(Country)[T.Serbia]                          0.6789      0.374      1.815
+0.070      -0.056       1.413
+C(Country)[T.Singapore]                      -0.1576      0.302     -0.521
+0.602      -0.751       0.436
+C(Country)[T.Slovakia]                       -1.0157      0.353     -2.876
+0.004      -1.709      -0.322
+C(Country)[T.Slovenia]                       -0.9038      0.398     -2.271
+0.024      -1.685      -0.122
+C(Country)[T.South Africa]                    0.0162      0.354      0.046
+0.963      -0.679       0.712
+C(Country)[T.South Korea]                    -0.9794      0.376     -2.605
+0.009      -1.718      -0.241
+C(Country)[T.Spain]                           0.0136      0.292      0.047
+0.963      -0.561       0.588
+C(Country)[T.Sri Lanka]                      -0.2135      0.291     -0.735
+0.463      -0.784       0.357
+C(Country)[T.Sweden]                         -0.3563      0.357     -0.998
+0.319      -1.057       0.345
+C(Country)[T.Switzerland]                    -0.4507      0.288     -1.563
+0.119      -1.017       0.116
+C(Country)[T.Syria]                          -0.6736      0.397     -1.696
+0.090      -1.454       0.106
+C(Country)[T.Taiwan]                          0.0677      0.356      0.190
+0.849      -0.631       0.766
+C(Country)[T.Tajikistan]                     -0.0208      0.396     -0.053
+0.958      -0.798       0.756
+C(Country)[T.Thailand]                       -0.7113      0.372     -1.911
+0.057      -1.443       0.020
+C(Country)[T.Trinidad]                       -0.7836      0.397     -1.972
+0.049      -1.564      -0.003
+C(Country)[T.Turkey]                         -0.0371      0.289     -0.128
+0.898      -0.605       0.531
+C(Country)[T.UAE]                            -0.2384      0.303     -0.787
+0.431      -0.833       0.356
+C(Country)[T.UK]                             -0.1671      0.292     -0.572
+0.567      -0.741       0.407
+C(Country)[T.USA]                             0.2567      0.290      0.885
+0.377      -0.313       0.827
+C(Country)[T.Ukraine]                        -0.2163      0.356     -0.608
+0.543      -0.915       0.482
+C(Country)[T.Uruguay]                         0.7631      0.390      1.956
+0.051      -0.003       1.529
+C(Country)[T.Uzbekistan]                     -0.7641      0.372     -2.053
+0.041      -1.495      -0.033
+C(Country)[T.Vatican City]                   -0.0307      0.381     -0.080
+0.936      -0.780       0.718
+C(Country)[T.Venezuela]                      -0.3754      0.375     -1.001
+0.317      -1.112       0.361
+C(Country)[T.Vietnam]                         0.2427      0.379      0.640
+0.522      -0.502       0.987
+C(Country)[T.Yemen]                          -0.1525      0.376     -0.405
+0.685      -0.892       0.587
+C(Most\_Used\_Platform)[T.Instagram]           -0.0147      0.042     -0.350
+0.727      -0.097       0.068
+C(Most\_Used\_Platform)[T.KakaoTalk]           -0.0303      0.263     -0.115
+0.908      -0.547       0.486
+C(Most\_Used\_Platform)[T.LINE]                -0.5637      0.128     -4.401
+0.000      -0.815      -0.312
+C(Most\_Used\_Platform)[T.LinkedIn]            -0.2165      0.125     -1.735
+0.083      -0.462       0.029
+C(Most\_Used\_Platform)[T.Snapchat]             0.4112      0.175      2.349
+0.019       0.067       0.755
+C(Most\_Used\_Platform)[T.TikTok]               0.1011      0.042      2.379
+0.018       0.018       0.185
+C(Most\_Used\_Platform)[T.Twitter]             -0.0883      0.061     -1.441
+0.150      -0.209       0.032
+C(Most\_Used\_Platform)[T.VKontakte]           -0.1038      0.120     -0.863
+0.389      -0.340       0.133
+C(Most\_Used\_Platform)[T.WeChat]              -0.1592      0.274     -0.582
+0.561      -0.697       0.378
+C(Most\_Used\_Platform)[T.WhatsApp]            -0.2782      0.059     -4.723
+0.000      -0.394      -0.163
+C(Most\_Used\_Platform)[T.YouTube]              0.0209      0.146      0.143
+0.887      -0.266       0.308
+C(Affects\_Academic\_Performance)[T.Yes]        0.6643      0.076      8.725
+0.000       0.515       0.814
+C(Relationship\_Status)[T.In Relationship]     0.1016      0.122      0.835
+0.404      -0.137       0.340
+C(Relationship\_Status)[T.Single]             -0.0435      0.121     -0.360
+0.719      -0.281       0.194
+Age                                          -0.0394      0.015     -2.637
+0.009      -0.069      -0.010
+Avg\_Daily\_Usage\_Hours                         0.0874      0.029      2.997
+0.003       0.030       0.145
+Sleep\_Hours\_Per\_Night                        -0.0744      0.026     -2.901
+0.004      -0.125      -0.024
+Mental\_Health\_Score                          -0.5453      0.033    -16.718
+0.000      -0.609      -0.481
+Conflicts\_Over\_Social\_Media                   0.4190      0.039     10.813
+0.000       0.343       0.495
+==============================================================================
+Omnibus:                       88.075   Durbin-Watson:                   2.111
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              768.322
+Skew:                           0.112   Prob(JB):                    1.45e-167
+Kurtosis:                       8.109   Cond. No.                     7.72e+03
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+[2] The condition number is large, 7.72e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.
     \end{Verbatim}
 
-    \subsection{VIF Evaluation}\label{vif-evaluation}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{VIF Evaluation}\label{vif-evaluation}
 
 \begin{itemize}
 \tightlist
@@ -685,7 +989,7 @@ specified.
 \end{itemize}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{6}{\boxspacing}
+\prompt{In}{incolor}{5}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{k}{def} \PY{n+nf}{compute\PYZus{}vif}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{p}{:}
     \PY{n}{vif\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{)}
@@ -702,14 +1006,14 @@ specified.
 \end{tcolorbox}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{7}{\boxspacing}
+\prompt{In}{incolor}{6}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{vif\PYZus{}model1}
 \end{Verbatim}
 \end{tcolorbox}
 
             \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{7}{\boxspacing}
+\prompt{Out}{outcolor}{6}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
                       Variable         VIF
 0                    Intercept  784.929070
@@ -722,14 +1026,14 @@ specified.
 \end{tcolorbox}
         
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{8}{\boxspacing}
+\prompt{In}{incolor}{7}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{vif\PYZus{}model2}\PY{p}{[}\PY{n}{vif\PYZus{}model2}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{VIF}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mi}{10}\PY{p}{]}
 \end{Verbatim}
 \end{tcolorbox}
 
             \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{8}{\boxspacing}
+\prompt{Out}{outcolor}{7}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
                                       Variable          VIF
 0                                    Intercept  4126.759655
@@ -776,7 +1080,9 @@ specified.
 \end{Verbatim}
 \end{tcolorbox}
         
-    \subsection{Optimal OLS Regression}\label{optimal-ols-regression}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Optimal OLS Regression}\label{optimal-ols-regression}
 
 \begin{itemize}
 \tightlist
@@ -810,7 +1116,7 @@ specified.
 \end{itemize}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{9}{\boxspacing}
+\prompt{In}{incolor}{8}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{model1\PYZus{}formula} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score \PYZti{} Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night + Mental\PYZus{}Health\PYZus{}Score + Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}
 \PY{n}{model1\PYZus{}formula\PYZus{}fit} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{o}{.}\PY{n}{from\PYZus{}formula}\PY{p}{(}\PY{n}{model1\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
@@ -821,7 +1127,7 @@ specified.
 \end{tcolorbox}
 
             \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{9}{\boxspacing}
+\prompt{Out}{outcolor}{8}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
                                 sum\_sq     df           F        PR(>F)
 Sleep\_Hours\_Per\_Night        21.117762    1.0  150.226194  1.977604e-31
@@ -831,7 +1137,9 @@ Residual                     98.541744  701.0         NaN           NaN
 \end{Verbatim}
 \end{tcolorbox}
         
-    \subsection{Model Diagnostics}\label{model-diagnostics}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Model Diagnostics}\label{model-diagnostics}
 
 \subsubsection{1. Residual Analysis}\label{residual-analysis}
 
@@ -840,8 +1148,8 @@ Residual                     98.541744  701.0         NaN           NaN
 적합도를 검토하기 위해 잔차 분석을 수행하였다.
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6842}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3158}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.2778}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.7222}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 그래프 유형
@@ -895,7 +1203,7 @@ Addicted\_Score}\label{histogram-of-addicted_score}
 \textbf{→ 결론}: 종속 변수를 2개의 분포로 분리하여 분석하는 작업 필요
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{10}{\boxspacing}
+\prompt{In}{incolor}{9}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{k}{def} \PY{n+nf}{resid\PYZus{}plot}\PY{p}{(}\PY{n}{model}\PY{p}{)}\PY{p}{:}
     \PY{n}{resid} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{resid}                               
@@ -935,19 +1243,19 @@ Addicted\_Score}\label{histogram-of-addicted_score}
 \end{tcolorbox}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{11}{\boxspacing}
+\prompt{In}{incolor}{10}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{resid\PYZus{}plot}\PY{p}{(}\PY{n}{model1\PYZus{}formula\PYZus{}fit}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{Regression_files/Regression_17_0.png}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{sns_addiction_regression_files/sns_addiction_regression_17_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{12}{\boxspacing}
+\prompt{In}{incolor}{11}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{6}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}\PY{p}{)}
 \PY{n}{plt}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{,} \PY{n}{edgecolor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{black}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
@@ -960,11 +1268,13 @@ Addicted\_Score}\label{histogram-of-addicted_score}
 \end{tcolorbox}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{Regression_files/Regression_18_0.png}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{sns_addiction_regression_files/sns_addiction_regression_18_0.png}
     \end{center}
     { \hspace*{\fill} \\}
     
-    \subsection{Gausian Mixture Method}\label{gausian-mixture-method}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Gausian Mixture Method}\label{gausian-mixture-method}
 
 \begin{itemize}
 \tightlist
@@ -981,14 +1291,16 @@ Addicted\_Score}\label{histogram-of-addicted_score}
 \end{itemize}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{ }{\boxspacing}
+\prompt{In}{incolor}{12}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{gmm} \PY{o}{=} \PY{n}{GaussianMixture}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
 \PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{gmm}\PY{o}{.}\PY{n}{fit\PYZus{}predict}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
-    \subsection{Group-specific Regression Analysis after
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Group-specific Regression Analysis after
 GMM}\label{group-specific-regression-analysis-after-gmm}
 
 GMM(Gaussian Mixture Model)을 활용하여 분리한 그룹에 대해 각각 회귀
@@ -1128,6 +1440,8 @@ dtype: float64
   나이는 높은 중독 그룹에서 중독 점수를 더 낮추는 경향
 \end{itemize}
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{16}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -1254,6 +1568,8 @@ dtype: float64
   정신건강 점수는 여전히 낮은 중독 그룹에서 훨씬 더 큰 부적 효과를 가짐
 \end{itemize}
 
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{19}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -1376,6 +1692,8 @@ dtype: float64
   중독 점수가 낮은 그룹은 학업 영향도, 정신건강 영향도 민감하게 인식하는
   경향
 \end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{22}{\boxspacing}
@@ -1508,7 +1826,9 @@ dtype: float64
   나타남
 \end{itemize}
 
-    \section{Conclusion}\label{conclusion}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Conclusion}\label{conclusion}
 
 \subsection{Research Summary}\label{research-summary}
 
