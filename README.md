@@ -23,7 +23,7 @@ This project analyzes factors influencing student social media addiction using r
 git clone https://github.com/your-username/sns-addiction-modeling.git
 cd sns-addiction-modeling
 pip install -r requirements.txt
-jupyter notebook regression.ipynb
+jupyter notebook sns_addiction_regression.ipynb
 ```
 
 
