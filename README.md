@@ -37,8 +37,8 @@ jupyter notebook regression.ipynb
 │   ├── Regression Tutorial.xlsx
 │   └── SEM_Regression Tutorial.pdf
 ├── README.md
-├── Regression.ipynb
-├── Regression.pdf
-├── Regression.tex
+├── sns_addiction_regression.ipynb
+├── sns_addiction_regression.pdf
+├── sns_addiction_regression.tex
 └── requirements.txt
 ```
