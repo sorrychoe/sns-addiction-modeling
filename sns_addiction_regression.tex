@@ -1,5 +1,6 @@
 \documentclass[11pt]{article}
-    \usepackage{kotex}
+\usepackage{kotex}
+
     \usepackage[breakable]{tcolorbox}
     \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
     
@@ -153,7 +154,26 @@
     \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
     \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
     \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
-
+    \makeatletter
+    \newsavebox\pandoc@box
+    \newcommand*\pandocbounded[1]{%
+      \sbox\pandoc@box{#1}%
+      % scaling factors for width and height
+      \Gscale@div\@tempa\textheight{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+      \Gscale@div\@tempb\linewidth{\wd\pandoc@box}%
+      % select the smaller of both
+      \ifdim\@tempb\p@<\@tempa\p@
+        \let\@tempa\@tempb
+      \fi
+      % scaling accordingly (\@tempa < 1)
+      \ifdim\@tempa\p@<\p@
+        \scalebox{\@tempa}{\usebox\pandoc@box}%
+      % scaling not needed, use as it is
+      \else
+        \usebox{\pandoc@box}%
+      \fi
+    }
+    \makeatother
 
     % Define a nice break command that doesn't care if a line doesn't already
     % exist.
@@ -222,6 +242,7 @@
 \@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
 \@namedef{PY@tok@ge}{\let\PY@it=\textit}
 \@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@ges}{\let\PY@bf=\textbf\let\PY@it=\textit}
 \@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
 \@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
 \@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
@@ -386,6 +407,24 @@
     
     
 
+\usepackage{newunicodechar}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≟}{\ensuremath{\stackrel{?}{=}}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≪}{\ensuremath{\ll}}
+\newunicodechar{≫}{\ensuremath{\gg}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{√}{\ensuremath{\sqrt{}}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{²}{\textsuperscript{2}}
+\newunicodechar{₀}{\textsubscript{0}}
+\newunicodechar{₁}{\textsubscript{1}}
+
 \begin{document}
     
     \maketitle
@@ -393,88 +432,263 @@
     
 
     
-    \section{Abstract}\label{abstract}
+    \hypertarget{abstract}{%
+\section{Abstract}\label{abstract}}
 
-본 연구는 학생들의 SNS 사용과 관련된 행동/심리적 요인이 중독 수준에
-미치는 영향을 분석을 목적으로 수행되었다. 본 연구는 SNS 일일 사용 시간,
-수면 시간, 정신 건강 점수, SNS 관련 갈등 경험, 나이 등의 변수가
-소셜미디어 중독 점수에 미치는 영향을 종합적으로 검토하는 방향으로
-수행되었으며, 방법론으로는 OLS 회귀, 범주형 변수 포함 회귀, GMM
-클러스터링, VIF 분석, ANOVA가 사용되었다. 결론적으로, 정신 건강 점수와
-SNS 갈등 경험이 중독에 가장 유의미한 영향을 주는 것으로 파악됐다. 또한
-중독 수준이 높아질수록 해당 요인의 영향력이 감소하였으며, 수면 시간은
-중독 점수와 음의 상관이 존재함을 파악했다.
+본 연구는 학생들의 SNS 사용 관련 행동·심리 요인이 \textbf{자기보고식
+중독 점수}와 어떤 통계적 연관을 갖는지 분석한다. SNS 일일 사용 시간,
+수면 시간, 정신 건강 점수, SNS 관련 갈등 경험, 나이를 설명 변수로 하여
+OLS 회귀, 다중공선성(VIF) 진단, 잔차·영향관측치 진단, 이분산에
+강건한(HC3) 추론, 순서형 로지스틱·로버스트 회귀를 통한 민감도 분석,
+그리고 하위집단 조절효과 분석(상호작용 모형 및 설명변수 기반
+잠재프로파일)을 수행하였다.
+
+분석 결과, 이 데이터에서 \textbf{정신 건강 점수(음의 방향)와 SNS 갈등
+경험(양의 방향)}이 중독 점수와 가장 강하게 연관되며, \textbf{수면
+시간}은 음의 연관을 보인다. 이 관계는 강건 표준오차, 순서형 로지스틱,
+로버스트 회귀, 영향관측치 제거 등 모든 대안적 추정에서 부호와 유의성이
+일관되게 유지된다.
+
+\begin{quote}
+\textbf{데이터에 관한 주의.} 본 분석에 사용한 자료는 Kaggle에 공개된
+\emph{합성(synthetic) 데이터셋} (``Students' Social Media
+Addiction'')이다. 종속 변수가 설명 변수들의 거의 결정론적 함수이며
+(704개 관측치의 설명변수 조합이 모두 유일한 중독 점수에 대응),
+상관계수와 결정계수(R² ≈ 0.95)가 실제 행동과학 조사에서 관측되기 어려운
+수준이다. 따라서 아래의 모든 결과는 \textbf{이 데이터셋의 생성 구조에
+대한 기술(記述)}이며, 실제 학생 모집단에 대한 인과적·일반화 가능한
+주장이 아니다. 본 보고서는 이 제약 하에서 \textbf{회귀·진단·하위집단
+분석 파이프라인을 방법론적으로 올바르게 수행하는 방법}을 함께 보이는
+것을 목적으로 한다.
+\end{quote}
 
     \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{Introduction}\label{introduction}
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
 
-\subsection{Research Question}\label{research-question}
+\hypertarget{research-question}{%
+\subsection{Research Question}\label{research-question}}
 
 \begin{quote}
-``학생들의 일일 소셜미디어 사용 시간, 수면 시간, 정신건강 점수, 그리고
-소셜미디어 관련 갈등 경험은 소셜미디어 중독 점수에 어떤 영향을
-미치는가?''
+``이 데이터셋에서 학생들의 일일 소셜미디어 사용 시간, 수면 시간,
+정신건강 점수, 소셜미디어 관련 갈등 경험은 소셜미디어 중독 점수와 어떤
+방향·크기의 통계적 연관을 갖는가? 그 연관은 하위집단에 따라
+달라지는가?''
 \end{quote}
 
-\subsection{Hyphothesis}\label{hyphothesis}
+\hypertarget{hypotheses}{%
+\subsection{Hypotheses}\label{hypotheses}}
 
-\begin{itemize}
-\tightlist
-\item
-  \textbf{귀무가설 (H0)}: 모든 독립 변수는 중독 점수에 유의미한 영향을
-  미치지 않는다.
-\item
-  \textbf{대립가설 (H1)}: 하나 이상의 독립 변수는 중독 점수에 유의미한
-  영향을 미친다.
-\end{itemize}
+전역 가설(``변수 하나라도 유의'') 대신, 이론에 근거한 \textbf{방향성
+가설}을 사용한다. (compensatory internet use / displacement 가설 등)
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+가설
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+내용
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+예상 부호
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+H1 & 정신 건강 점수가 낮을수록 중독 점수가 높다 & β(Mental\_Health)
+\textless{} 0 \\
+H2 & SNS 관련 갈등 경험이 많을수록 중독 점수가 높다 & β(Conflicts)
+\textgreater{} 0 \\
+H3 & 수면 시간이 짧을수록 중독 점수가 높다 & β(Sleep) \textless{} 0 \\
+H4 & 일일 사용 시간이 길수록 중독 점수가 높다 (다른 변수 통제 시) &
+β(Usage) \textgreater{} 0 \\
+H5 & 위 연관의 크기는 ``SNS가 학업에 영향을 준다''고 인식하는지 여부에
+따라 다르다 & 상호작용 ≠ 0 \\
+\end{longtable}
+
+\hypertarget{uxbd84uxc11duxc0c1uxc758-uxac1cuxb150uxc801-uxc720uxc758uxc810-uxc21cuxd658uxc131}{%
+\subsection{분석상의 개념적 유의점
+(순환성)}\label{uxbd84uxc11duxc0c1uxc758-uxac1cuxb150uxc801-uxc720uxc758uxc810-uxc21cuxd658uxc131}}
+
+\texttt{Conflicts\_Over\_Social\_Media},
+\texttt{Avg\_Daily\_Usage\_Hours},
+\texttt{Affects\_Academic\_Performance}는 ``SNS가 삶에 미치는 부정적
+영향''이라는 중독 구성개념과 상당 부분 겹친다. 따라서 이들을 넣은 모형의
+높은 설명력은 ``예측''이라기보다 \textbf{구성개념 내부의 동어반복}에
+가깝다. 본 보고서는 개념적으로 비교적 독립적인 변수(수면, 나이,
+인구통계)와 구성개념 중첩 변수를 구분하여 해석한다.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{setup}{%
+\section{Setup}\label{setup}}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{1}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
-\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{stats}\PY{n+nn}{.}\PY{n+nn}{outliers\PYZus{}influence} \PY{k+kn}{import} \PY{n}{variance\PYZus{}inflation\PYZus{}factor}
-\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{graphics}\PY{n+nn}{.}\PY{n+nn}{gofplots} \PY{k+kn}{import} \PY{n}{qqplot}
-\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{mixture} \PY{k+kn}{import} \PY{n}{GaussianMixture}
-\PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k+kn}{import} \PY{n}{stats}
-\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
-\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
-\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
-\PY{k+kn}{import} \PY{n+nn}{patsy}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{pathlib}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{Path}
 
-\PY{k+kn}{import} \PY{n+nn}{warnings}
-\PY{n}{warnings}\PY{o}{.}\PY{n}{filterwarnings}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ignore}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{numpy}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{np}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{pandas}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{pd}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{plt}
 
-\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{data/Students Social Media Addiction.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{sm}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{formula}\PY{n+nn}{.}\PY{n+nn}{api}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{smf}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{stats}\PY{n+nn}{.}\PY{n+nn}{outliers\PYZus{}influence}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{variance\PYZus{}inflation\PYZus{}factor}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{stats}\PY{n+nn}{.}\PY{n+nn}{diagnostic}\PY{+w}{ }\PY{k+kn}{import} \PY{p}{(}
+    \PY{n}{het\PYZus{}breuschpagan}\PY{p}{,}
+    \PY{n}{het\PYZus{}white}\PY{p}{,}
+    \PY{n}{linear\PYZus{}reset}\PY{p}{,}
+\PY{p}{)}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{stats}\PY{n+nn}{.}\PY{n+nn}{stattools}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{jarque\PYZus{}bera}\PY{p}{,} \PY{n}{durbin\PYZus{}watson}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{graphics}\PY{n+nn}{.}\PY{n+nn}{gofplots}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{qqplot}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{miscmodels}\PY{n+nn}{.}\PY{n+nn}{ordinal\PYZus{}model}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{OrderedModel}
+
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{KFold}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{mixture}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{GaussianMixture}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{preprocessing}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{StandardScaler}
+
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{scipy}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{stats}
+
+\PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+
+\PY{n}{SEED} \PY{o}{=} \PY{l+m+mi}{42}
+\PY{n}{rng} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{default\PYZus{}rng}\PY{p}{(}\PY{n}{SEED}\PY{p}{)}
+\PY{n}{pd}\PY{o}{.}\PY{n}{set\PYZus{}option}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{display.width}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+m+mi}{120}\PY{p}{)}
+\PY{n}{pd}\PY{o}{.}\PY{n}{set\PYZus{}option}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{display.max\PYZus{}columns}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+m+mi}{40}\PY{p}{)}
+
+\PY{n}{DATA\PYZus{}PATH} \PY{o}{=} \PY{n}{Path}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{data}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Students Social Media Addiction.csv}\PY{l+s+s2}{\PYZdq{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{helper-functions}{%
+\subsubsection{Helper functions}\label{helper-functions}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{compute\PYZus{}vif}\PY{p}{(}\PY{n}{exog}\PY{p}{:} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{)} \PY{o}{\PYZhy{}}\PY{o}{\PYZgt{}} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}예측 변수에 대한 VIF. 절편 열이 있으면 제외하고 계산한다.\PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{X} \PY{o}{=} \PY{n}{exog}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+    \PY{n}{drop} \PY{o}{=} \PY{p}{[}\PY{n}{c} \PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{n}{X}\PY{o}{.}\PY{n}{columns} \PY{k}{if} \PY{n}{c}\PY{o}{.}\PY{n}{lower}\PY{p}{(}\PY{p}{)} \PY{o+ow}{in} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{intercept}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{const}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{]}
+    \PY{n}{X} \PY{o}{=} \PY{n}{X}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{n}{drop}\PY{p}{)}
+    \PY{n}{X} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{has\PYZus{}constant}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{add}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} VIF 계산에는 상수항이 필요}
+    \PY{n}{rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{name} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if} \PY{n}{name} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{const}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+            \PY{k}{continue}
+        \PY{n}{rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{n}{name}\PY{p}{,} \PY{n}{variance\PYZus{}inflation\PYZus{}factor}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{values}\PY{p}{,} \PY{n}{i}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+    \PY{k}{return} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{rows}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Variable}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{VIF}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{VIF}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+
+
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{standardized\PYZus{}betas}\PY{p}{(}\PY{n}{y\PYZus{}name}\PY{p}{,} \PY{n}{x\PYZus{}names}\PY{p}{,} \PY{n}{data}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}모든 수치형 변수를 z\PYZhy{}표준화한 뒤 OLS를 적합해 표준화 계수(β)를 반환.\PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{cols} \PY{o}{=} \PY{p}{[}\PY{n}{y\PYZus{}name}\PY{p}{]} \PY{o}{+} \PY{n+nb}{list}\PY{p}{(}\PY{n}{x\PYZus{}names}\PY{p}{)}
+    \PY{n}{z} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{n}{cols}\PY{p}{]}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{s}\PY{p}{:} \PY{p}{(}\PY{n}{s} \PY{o}{\PYZhy{}} \PY{n}{s}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{/} \PY{n}{s}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{ddof}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+    \PY{n}{res} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{y\PYZus{}name}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ \PYZti{} }\PY{l+s+s2}{\PYZdq{}} \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ + }\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{x\PYZus{}names}\PY{p}{)}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{z}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+    \PY{k}{return} \PY{n}{res}\PY{o}{.}\PY{n}{params}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Intercept}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{std\PYZus{}beta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{cv\PYZus{}scores}\PY{p}{(}\PY{n}{formula}\PY{p}{,} \PY{n}{data}\PY{p}{,} \PY{n}{k}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{,} \PY{n}{seed}\PY{o}{=}\PY{n}{SEED}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}k\PYZhy{}겹 교차검증 RMSE / R² (표본 밖 성능).\PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{kf} \PY{o}{=} \PY{n}{KFold}\PY{p}{(}\PY{n}{n\PYZus{}splits}\PY{o}{=}\PY{n}{k}\PY{p}{,} \PY{n}{shuffle}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{seed}\PY{p}{)}
+    \PY{n}{y\PYZus{}true}\PY{p}{,} \PY{n}{y\PYZus{}pred} \PY{o}{=} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{tr}\PY{p}{,} \PY{n}{te} \PY{o+ow}{in} \PY{n}{kf}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{n}{data}\PY{p}{)}\PY{p}{:}
+        \PY{n}{fit} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{data}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{tr}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+        \PY{n}{p} \PY{o}{=} \PY{n}{fit}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{data}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{te}\PY{p}{]}\PY{p}{)}
+        \PY{n}{y\PYZus{}true}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{data}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{te}\PY{p}{]}\PY{p}{[}\PY{n}{formula}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZti{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{strip}\PY{p}{(}\PY{p}{)}\PY{p}{]}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        \PY{n}{y\PYZus{}pred}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{p}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+    \PY{n}{y\PYZus{}true} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{concatenate}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{p}{)}
+    \PY{n}{y\PYZus{}pred} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{concatenate}\PY{p}{(}\PY{n}{y\PYZus{}pred}\PY{p}{)}
+    \PY{n}{rmse} \PY{o}{=} \PY{n+nb}{float}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{(}\PY{n}{y\PYZus{}true} \PY{o}{\PYZhy{}} \PY{n}{y\PYZus{}pred}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+    \PY{n}{ss\PYZus{}res} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{y\PYZus{}true} \PY{o}{\PYZhy{}} \PY{n}{y\PYZus{}pred}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}
+    \PY{n}{ss\PYZus{}tot} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{y\PYZus{}true} \PY{o}{\PYZhy{}} \PY{n}{y\PYZus{}true}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}
+    \PY{k}{return} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{cv\PYZus{}rmse}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{rmse}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{cv\PYZus{}r2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{float}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{ss\PYZus{}res} \PY{o}{/} \PY{n}{ss\PYZus{}tot}\PY{p}{)}\PY{p}{\PYZcb{}}
+
+
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{bh\PYZus{}adjust}\PY{p}{(}\PY{n}{pvals}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Benjamini\PYZhy{}Hochberg FDR 보정 p\PYZhy{}value.\PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{p} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{asarray}\PY{p}{(}\PY{n}{pvals}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{n} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{p}\PY{p}{)}
+    \PY{n}{order} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{argsort}\PY{p}{(}\PY{n}{p}\PY{p}{)}
+    \PY{n}{ranked} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{empty}\PY{p}{(}\PY{n}{n}\PY{p}{)}
+    \PY{n}{cummin} \PY{o}{=} \PY{l+m+mf}{1.0}
+    \PY{k}{for} \PY{n}{rank}\PY{p}{,} \PY{n}{idx} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n+nb}{reversed}\PY{p}{(}\PY{n}{order}\PY{p}{)}\PY{p}{,} \PY{n}{start}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+        \PY{n}{i} \PY{o}{=} \PY{n}{n} \PY{o}{\PYZhy{}} \PY{n}{rank} \PY{o}{+} \PY{l+m+mi}{1}
+        \PY{n}{val} \PY{o}{=} \PY{n}{p}\PY{p}{[}\PY{n}{idx}\PY{p}{]} \PY{o}{*} \PY{n}{n} \PY{o}{/} \PY{n}{i}
+        \PY{n}{cummin} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{n}{cummin}\PY{p}{,} \PY{n}{val}\PY{p}{)}
+        \PY{n}{ranked}\PY{p}{[}\PY{n}{idx}\PY{p}{]} \PY{o}{=} \PY{n}{cummin}
+    \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{clip}\PY{p}{(}\PY{n}{ranked}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
     \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{Research Method}\label{research-method}
-
-\subsection{Data}\label{data}
+\hypertarget{data}{%
+\section{Data}\label{data}}
 
 \begin{itemize}
 \tightlist
 \item
-  \textbf{샘플 수}: 705명
+  \textbf{출처}: Kaggle, ``Students' Social Media Addiction'' (합성
+  데이터셋)
 \item
-  \textbf{주요 변수}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    종속 변수: \texttt{Addicted\_Score} (소셜미디어 중독 점수)
-  \item
-    독립 변수: \texttt{Avg\_Daily\_Usage\_Hours},
-    \texttt{Sleep\_Hours\_Per\_Night}, \texttt{Mental\_Health\_Score},
-    \texttt{Conflicts\_Over\_Social\_Media}, \texttt{Age} 등
-  \end{itemize}
+  \textbf{원 관측치 수}: 705 → 완전 중복 1행 제거 후 \textbf{704}
+\item
+  \textbf{종속 변수}: \texttt{Addicted\_Score} (2--9의 유계 순서형 정수
+  척도, 검증된 심리척도 아님)
+\item
+  \textbf{설명 변수}: \texttt{Avg\_Daily\_Usage\_Hours},
+  \texttt{Sleep\_Hours\_Per\_Night}, \texttt{Mental\_Health\_Score},
+  \texttt{Conflicts\_Over\_Social\_Media}, \texttt{Age}, 그리고
+  범주형(\texttt{Gender}, \texttt{Academic\_Level},
+  \texttt{Most\_Used\_Platform},
+  \texttt{Affects\_Academic\_Performance},
+  \texttt{Relationship\_Status}, \texttt{Country})
 \end{itemize}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{2}{\boxspacing}
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{raw} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{n}{DATA\PYZus{}PATH}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{원본 shape:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{raw}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+
+\PY{n}{feature\PYZus{}cols} \PY{o}{=} \PY{p}{[}\PY{n}{c} \PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{n}{raw}\PY{o}{.}\PY{n}{columns} \PY{k}{if} \PY{n}{c} \PY{o}{!=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Student\PYZus{}ID}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{dupe\PYZus{}mask} \PY{o}{=} \PY{n}{raw}\PY{o}{.}\PY{n}{duplicated}\PY{p}{(}\PY{n}{subset}\PY{o}{=}\PY{n}{feature\PYZus{}cols}\PY{p}{,} \PY{n}{keep}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{first}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{완전 중복 행 수:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n+nb}{int}\PY{p}{(}\PY{n}{dupe\PYZus{}mask}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{raw}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{raw}\PY{o}{.}\PY{n}{duplicated}\PY{p}{(}\PY{n}{subset}\PY{o}{=}\PY{n}{feature\PYZus{}cols}\PY{p}{,} \PY{n}{keep}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{,} \PY{n}{feature\PYZus{}cols}\PY{p}{]}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{df} \PY{o}{=} \PY{n}{raw}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{o}{\PYZti{}}\PY{n}{dupe\PYZus{}mask}\PY{p}{]}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{분석용 shape:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{df}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+원본 shape: (705, 13)
+완전 중복 행 수: 1
+     Age Gender Academic\_Level Country  Avg\_Daily\_Usage\_Hours Most\_Used\_Platform
+Affects\_Academic\_Performance  \textbackslash{}
+241   21   Male       Graduate   Italy                    5.4          Instagram
+Yes
+273   21   Male       Graduate   Italy                    5.4          Instagram
+Yes
+
+     Sleep\_Hours\_Per\_Night  Mental\_Health\_Score Relationship\_Status
+Conflicts\_Over\_Social\_Media  Addicted\_Score
+241                    6.7                    5              Single
+3               7
+273                    6.7                    5              Single
+3               7
+
+분석용 shape: (704, 13)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{df}\PY{o}{.}\PY{n}{info}\PY{p}{(}\PY{p}{)}
 \end{Verbatim}
@@ -482,160 +696,227 @@ SNS 갈등 경험이 중독에 가장 유의미한 영향을 주는 것으로 �
 
     \begin{Verbatim}[commandchars=\\\{\}]
 <class 'pandas.core.frame.DataFrame'>
-RangeIndex: 705 entries, 0 to 704
+RangeIndex: 704 entries, 0 to 703
 Data columns (total 13 columns):
  \#   Column                        Non-Null Count  Dtype
 ---  ------                        --------------  -----
- 0   Student\_ID                    705 non-null    int64
- 1   Age                           705 non-null    int64
- 2   Gender                        705 non-null    object
- 3   Academic\_Level                705 non-null    object
- 4   Country                       705 non-null    object
- 5   Avg\_Daily\_Usage\_Hours         705 non-null    float64
- 6   Most\_Used\_Platform            705 non-null    object
- 7   Affects\_Academic\_Performance  705 non-null    object
- 8   Sleep\_Hours\_Per\_Night         705 non-null    float64
- 9   Mental\_Health\_Score           705 non-null    int64
- 10  Relationship\_Status           705 non-null    object
- 11  Conflicts\_Over\_Social\_Media   705 non-null    int64
- 12  Addicted\_Score                705 non-null    int64
+ 0   Student\_ID                    704 non-null    int64
+ 1   Age                           704 non-null    int64
+ 2   Gender                        704 non-null    object
+ 3   Academic\_Level                704 non-null    object
+ 4   Country                       704 non-null    object
+ 5   Avg\_Daily\_Usage\_Hours         704 non-null    float64
+ 6   Most\_Used\_Platform            704 non-null    object
+ 7   Affects\_Academic\_Performance  704 non-null    object
+ 8   Sleep\_Hours\_Per\_Night         704 non-null    float64
+ 9   Mental\_Health\_Score           704 non-null    int64
+ 10  Relationship\_Status           704 non-null    object
+ 11  Conflicts\_Over\_Social\_Media   704 non-null    int64
+ 12  Addicted\_Score                704 non-null    int64
 dtypes: float64(2), int64(5), object(6)
-memory usage: 71.7+ KB
+memory usage: 71.6+ KB
     \end{Verbatim}
 
-    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\subsection{Correlation Analysis}\label{correlation-analysis}
-
-\begin{itemize}
-\tightlist
-\item
-  주요 변수 간 피어슨 상관계수 계산
-\item
-  \texttt{Addicted\_Score}와 높은 상관을 가진 변수:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \texttt{Mental\_Health\_Score}: \textbf{-0.945} (강한 음의 상관)
-  \item
-    \texttt{Conflicts\_Over\_Social\_Media}: \textbf{+0.934}
-  \item
-    \texttt{Avg\_Daily\_Usage\_Hours}: \textbf{+0.832}
-  \end{itemize}
-\end{itemize}
-
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{3}{\boxspacing}
+\prompt{In}{incolor}{5}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{numeric\PYZus{}vars} \PY{o}{=} \PY{p}{[}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}
-\PY{p}{]}
-\PY{n}{correlation\PYZus{}matrix} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{numeric\PYZus{}vars}\PY{p}{]}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{p}{)}
-
-\PY{n}{correlation\PYZus{}matrix}
+\PY{n}{NUMERIC} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Age}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+           \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{df}\PY{p}{[}\PY{n}{NUMERIC} \PY{o}{+} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{T}
 \end{Verbatim}
 \end{tcolorbox}
 
             \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{3}{\boxspacing}
+\prompt{Out}{outcolor}{5}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-                                  Age  Avg\_Daily\_Usage\_Hours  \textbackslash{}
-Age                          1.000000              -0.113682
-Avg\_Daily\_Usage\_Hours       -0.113682               1.000000
-Sleep\_Hours\_Per\_Night        0.125265              -0.790582
-Mental\_Health\_Score          0.160278              -0.801058
-Conflicts\_Over\_Social\_Media -0.184482               0.804582
-Addicted\_Score              -0.166396               0.832000
-
-                             Sleep\_Hours\_Per\_Night  Mental\_Health\_Score  \textbackslash{}
-Age                                       0.125265             0.160278
-Avg\_Daily\_Usage\_Hours                    -0.790582            -0.801058
-Sleep\_Hours\_Per\_Night                     1.000000             0.707439
-Mental\_Health\_Score                       0.707439             1.000000
-Conflicts\_Over\_Social\_Media              -0.677266            -0.893572
-Addicted\_Score                           -0.764858            -0.945051
-
-                             Conflicts\_Over\_Social\_Media  Addicted\_Score
-Age                                            -0.184482       -0.166396
-Avg\_Daily\_Usage\_Hours                           0.804582        0.832000
-Sleep\_Hours\_Per\_Night                          -0.677266       -0.764858
-Mental\_Health\_Score                            -0.893572       -0.945051
-Conflicts\_Over\_Social\_Media                     1.000000        0.933586
-Addicted\_Score                                  0.933586        1.000000
+                             count       mean       std   min   25\%   50\%   75\%
+max
+Age                          704.0  20.659091  1.400153  18.0  19.0  21.0  22.0
+24.0
+Avg\_Daily\_Usage\_Hours        704.0   4.918040  1.258157   1.5   4.1   4.8   5.8
+8.5
+Sleep\_Hours\_Per\_Night        704.0   6.869176  1.127631   3.8   6.0   6.9   7.7
+9.6
+Mental\_Health\_Score          704.0   6.228693  1.104871   4.0   5.0   6.0   7.0
+9.0
+Conflicts\_Over\_Social\_Media  704.0   2.849432  0.958632   0.0   2.0   3.0   4.0
+5.0
+Addicted\_Score               704.0   6.436080  1.588151   2.0   5.0   7.0   8.0
+9.0
 \end{Verbatim}
 \end{tcolorbox}
         
-    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+    \texttt{Addicted\_Score}는 2--9 범위의 정수 8개 값만 취하는 \textbf{유계
+순서형} 변수다. OLS는 이를 연속으로 근사하므로 예측값이 범위를 벗어날 수
+있다. 이 근사의 타당성은 뒤에서 순서형 로지스틱 회귀와 비교하여
+점검한다.
 
-\subsection{OLS Regression}\label{ols-regression}
-
-\subsubsection{모델 1: 수치형 변수만 포함한
-회귀}\label{uxbaa8uxb378-1-uxc218uxce58uxd615-uxbcc0uxc218uxb9cc-uxd3ecuxd568uxd55c-uxd68cuxadc0}
-
-\begin{itemize}
-\tightlist
-\item
-  설명력 (R²): 0.945
-\item
-  유의미 변수:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \texttt{Mental\_Health\_Score} (p \textless{} 0.001)
-  \item
-    \texttt{Conflicts\_Over\_Social\_Media} (p \textless{} 0.001)
-  \item
-    \texttt{Sleep\_Hours\_Per\_Night} (p \textless{} 0.001)
-  \end{itemize}
-\end{itemize}
-
-\subsubsection{모델 2: 범주형 변수 포함 (Gender, Country, Platform
-등)}\label{uxbaa8uxb378-2-uxbc94uxc8fcuxd615-uxbcc0uxc218-uxd3ecuxd568-gender-country-platform-uxb4f1}
-
-\begin{itemize}
-\tightlist
-\item
-  설명력 (R²): 0.982
-\item
-  유의미 변수:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    학업 성과에 영향을 준다고 답한 경우 (\texttt{+0.66})
-  \item
-    TikTok, Snapchat 사용자 (정의 영향)
-  \item
-    WhatsApp, LINE 사용자 (부의 영향)
-  \end{itemize}
-\end{itemize}
+\texttt{Country}는 704행에 \textbf{110개 수준}을 가지며 대부분 관측치가
+1--2개다. 고정효과 더미로 넣으면 거의 포화(saturated) 모형이 되어
+계수·VIF가 폭증하므로, 본 분석의 주 모형에서는 \texttt{Country}를
+제외한다(아래 VIF 절 참조).
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{4}{\boxspacing}
+\prompt{In}{incolor}{6}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{c+c1}{\PYZsh{} 모델 1: 수치형 변수만 포함한 회귀모형}
-\PY{n}{model1\PYZus{}features} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-                   \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-\PY{n}{y1}\PY{p}{,} \PY{n}{X1} \PY{o}{=} \PY{n}{patsy}\PY{o}{.}\PY{n}{dmatrices}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score \PYZti{} }\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ + }\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{model1\PYZus{}features}\PY{p}{)}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{return\PYZus{}type}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataframe}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-\PY{n}{model1} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y1}\PY{p}{,} \PY{n}{X1}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Country 수준 수:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Country}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{nunique}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Country}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{tail}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+\PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Gender}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Academic\PYZus{}Level}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Most\PYZus{}Used\PYZus{}Platform}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+          \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Affects\PYZus{}Academic\PYZus{}Performance}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Relationship\PYZus{}Status}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{c}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{: }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{sorted}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{n}{c}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
 
-\PY{c+c1}{\PYZsh{} 모델 2: 범주형 변수 포함한 회귀모형}
-\PY{c+c1}{\PYZsh{} 범주형 변수는 자동으로 더미 처리됨}
-\PY{n}{formula\PYZus{}model2} \PY{o}{=} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score \PYZti{} Age + Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours + Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night + }\PY{l+s+s1}{\PYZsq{}}
-                  \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score + Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media + }\PY{l+s+s1}{\PYZsq{}}
-                  \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C(Gender) + C(Academic\PYZus{}Level) + C(Country) + }\PY{l+s+s1}{\PYZsq{}}
-                  \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C(Most\PYZus{}Used\PYZus{}Platform) + C(Affects\PYZus{}Academic\PYZus{}Performance) + }\PY{l+s+s1}{\PYZsq{}}
-                  \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C(Relationship\PYZus{}Status)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \begin{Verbatim}[commandchars=\\\{\}]
+Country 수준 수: 110
+Country
+Iraq           1
+Lebanon        1
+Jordan         1
+Oman           1
+Afghanistan    1
+Syria          1
+Yemen          1
+Bhutan         1
+Name: count, dtype: int64
 
-\PY{n}{y2}\PY{p}{,} \PY{n}{X2} \PY{o}{=} \PY{n}{patsy}\PY{o}{.}\PY{n}{dmatrices}\PY{p}{(}\PY{n}{formula\PYZus{}model2}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{return\PYZus{}type}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dataframe}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-\PY{n}{model2} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y2}\PY{p}{,} \PY{n}{X2}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+Gender: ['Female', 'Male']
+
+Academic\_Level: ['Graduate', 'High School', 'Undergraduate']
+
+Most\_Used\_Platform: ['Facebook', 'Instagram', 'KakaoTalk', 'LINE', 'LinkedIn',
+'Snapchat', 'TikTok', 'Twitter', 'VKontakte', 'WeChat', 'WhatsApp', 'YouTube']
+
+Affects\_Academic\_Performance: ['No', 'Yes']
+
+Relationship\_Status: ['Complicated', 'In Relationship', 'Single']
+    \end{Verbatim}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{correlation-analysis}{%
+\subsection{Correlation Analysis}\label{correlation-analysis}}
+
+종속 변수가 순서형이므로 Pearson과 함께 \textbf{Spearman} 상관을
+보고한다.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{pearson} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{NUMERIC} \PY{o}{+} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{n}{method}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pearson}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{spearman} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{NUMERIC} \PY{o}{+} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{n}{method}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{spearman}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Pearson}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{pearson}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Spearman}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{spearman}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Pearson
+                                Age  Avg\_Daily\_Usage\_Hours
+Sleep\_Hours\_Per\_Night  Mental\_Health\_Score  \textbackslash{}
+Age                          1.000                 -0.114                  0.125
+0.161
+Avg\_Daily\_Usage\_Hours       -0.114                  1.000                 -0.791
+-0.801
+Sleep\_Hours\_Per\_Night        0.125                 -0.791                  1.000
+0.708
+Mental\_Health\_Score          0.161                 -0.801                  0.708
+1.000
+Conflicts\_Over\_Social\_Media -0.185                  0.805                 -0.677
+-0.894
+Addicted\_Score              -0.167                  0.832                 -0.765
+-0.945
+
+                             Conflicts\_Over\_Social\_Media  Addicted\_Score
+Age                                               -0.185          -0.167
+Avg\_Daily\_Usage\_Hours                              0.805           0.832
+Sleep\_Hours\_Per\_Night                             -0.677          -0.765
+Mental\_Health\_Score                               -0.894          -0.945
+Conflicts\_Over\_Social\_Media                        1.000           0.934
+Addicted\_Score                                     0.934           1.000
+
+Spearman
+                                Age  Avg\_Daily\_Usage\_Hours
+Sleep\_Hours\_Per\_Night  Mental\_Health\_Score  \textbackslash{}
+Age                          1.000                 -0.103                  0.132
+0.158
+Avg\_Daily\_Usage\_Hours       -0.103                  1.000                 -0.814
+-0.802
+Sleep\_Hours\_Per\_Night        0.132                 -0.814                  1.000
+0.734
+Mental\_Health\_Score          0.158                 -0.802                  0.734
+1.000
+Conflicts\_Over\_Social\_Media -0.178                  0.803                 -0.722
+-0.909
+Addicted\_Score              -0.171                  0.838                 -0.788
+-0.950
+
+                             Conflicts\_Over\_Social\_Media  Addicted\_Score
+Age                                               -0.178          -0.171
+Avg\_Daily\_Usage\_Hours                              0.803           0.838
+Sleep\_Hours\_Per\_Night                             -0.722          -0.788
+Mental\_Health\_Score                               -0.909          -0.950
+Conflicts\_Over\_Social\_Media                        1.000           0.951
+Addicted\_Score                                     0.951           1.000
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{13}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+\PY{k}{for} \PY{n}{ax}\PY{p}{,} \PY{n}{mat}\PY{p}{,} \PY{n}{title} \PY{o+ow}{in} \PY{n+nb}{zip}\PY{p}{(}\PY{n}{axes}\PY{p}{,} \PY{p}{[}\PY{n}{pearson}\PY{p}{,} \PY{n}{spearman}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Pearson}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Spearman}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}\PY{p}{:}
+    \PY{n}{im} \PY{o}{=} \PY{n}{ax}\PY{o}{.}\PY{n}{imshow}\PY{p}{(}\PY{n}{mat}\PY{p}{,} \PY{n}{vmin}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{vmax}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RdBu\PYZus{}r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xticks}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{mat}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xticklabels}\PY{p}{(}\PY{n}{mat}\PY{o}{.}\PY{n}{columns}\PY{p}{,} \PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{45}\PY{p}{,} \PY{n}{ha}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{right}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}yticks}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{mat}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}yticklabels}\PY{p}{(}\PY{n}{mat}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{mat}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{mat}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+            \PY{n}{ax}\PY{o}{.}\PY{n}{text}\PY{p}{(}\PY{n}{j}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{mat}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{+w}{ }\PY{n}{j}\PY{p}{]}\PY{l+s+si}{:}\PY{l+s+s2}{.2f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ha}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{center}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{va}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{center}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{8}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{title}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ correlation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{fig}\PY{o}{.}\PY{n}{colorbar}\PY{p}{(}\PY{n}{im}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{,} \PY{n}{fraction}\PY{o}{=}\PY{l+m+mf}{0.046}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{sns_addiction_regression_files/sns_addiction_regression_14_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \texttt{Addicted\_Score}와 \texttt{Mental\_Health\_Score}(≈ −0.95),
+\texttt{Conflicts\_Over\_Social\_Media}(≈ +0.93)의 상관은 극단적으로
+크다. 실제 조사 자료에서는 보기 어려운 값으로, \textbf{합성 데이터의
+생성 규칙}을 반영한다. 이 사실은 이후 모든 결정계수·유의확률 해석의
+배경으로 유지한다.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{ols-regression-uxbaa8uxb378-uxad6cuxc131}{%
+\subsection{OLS Regression --- 모델
+구성}\label{ols-regression-uxbaa8uxb378-uxad6cuxc131}}
+
+모든 모형은 \textbf{HC3 이분산-강건 표준오차}로
+추론한다(\texttt{Covariance\ Type:\ HC3}). 범주형 변수는 patsy
+\texttt{C()}로 처리하여 더미 함정(dummy trap)을 피한다.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{model1\PYZus{}formula} \PY{o}{=} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score \PYZti{} Age + Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours + Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night + }\PY{l+s+s2}{\PYZdq{}}
+                  \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mental\PYZus{}Health\PYZus{}Score + Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} 모델 2: 범주형 포함 (Country 제외 — 아래 VIF 절에서 근거 제시)}
+\PY{n}{model2\PYZus{}formula} \PY{o}{=} \PY{p}{(}\PY{n}{model1\PYZus{}formula}
+                  \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ + C(Gender) + C(Academic\PYZus{}Level) + C(Most\PYZus{}Used\PYZus{}Platform)}\PY{l+s+s2}{\PYZdq{}}
+                  \PY{o}{+} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ + C(Affects\PYZus{}Academic\PYZus{}Performance) + C(Relationship\PYZus{}Status)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{model1} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{model1\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{cov\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HC3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{model2} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{model2\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{cov\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HC3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 
 \PY{n+nb}{print}\PY{p}{(}\PY{n}{model1}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{            }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{n}{model2}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
@@ -644,1238 +925,1036 @@ Addicted\_Score                                  0.933586        1.000000
 ==============================================================================
 Dep. Variable:         Addicted\_Score   R-squared:                       0.945
 Model:                            OLS   Adj. R-squared:                  0.944
-Method:                 Least Squares   F-statistic:                     2380.
-Date:                Fri, 20 Jun 2025   Prob (F-statistic):               0.00
-Time:                        13:11:25   Log-Likelihood:                -306.26
-No. Observations:                 705   AIC:                             624.5
-Df Residuals:                     699   BIC:                             651.9
+Method:                 Least Squares   F-statistic:                     2138.
+Date:                Thu, 10 Sep 2026   Prob (F-statistic):               0.00
+Time:                        16:04:59   Log-Likelihood:                -305.72
+No. Observations:                 704   AIC:                             623.4
+Df Residuals:                     698   BIC:                             650.8
 Df Model:                           5
-Covariance Type:            nonrobust
+Covariance Type:                  HC3
 ================================================================================
 ===============
-                                  coef    std err          t      P>|t|
+                                  coef    std err          z      P>|z|
 [0.025      0.975]
 --------------------------------------------------------------------------------
 ---------------
-Intercept                       9.9859      0.396     25.222      0.000
-9.209      10.763
-Age                             0.0037      0.010      0.363      0.717
--0.017       0.024
-Avg\_Daily\_Usage\_Hours           0.0203      0.023      0.872      0.384
--0.025       0.066
-Sleep\_Hours\_Per\_Night          -0.2103      0.021    -10.032      0.000
--0.251      -0.169
-Mental\_Health\_Score            -0.6715      0.030    -22.072      0.000
--0.731      -0.612
-Conflicts\_Over\_Social\_Media     0.6666      0.035     19.004      0.000
-0.598       0.735
+Intercept                      10.0045      0.432     23.172      0.000
+9.158      10.851
+Age                             0.0038      0.010      0.378      0.705
+-0.016       0.024
+Avg\_Daily\_Usage\_Hours           0.0204      0.022      0.929      0.353
+-0.023       0.063
+Sleep\_Hours\_Per\_Night          -0.2098      0.020    -10.725      0.000
+-0.248      -0.171
+Mental\_Health\_Score            -0.6743      0.032    -20.973      0.000
+-0.737      -0.611
+Conflicts\_Over\_Social\_Media     0.6642      0.042     15.940      0.000
+0.583       0.746
 ==============================================================================
-Omnibus:                       31.428   Durbin-Watson:                   2.048
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):               42.402
-Skew:                           0.408   Prob(JB):                     6.20e-10
-Kurtosis:                       3.882   Cond. No.                         658.
-==============================================================================
-
-Notes:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly
-specified.
-
-                            OLS Regression Results
-==============================================================================
-Dep. Variable:         Addicted\_Score   R-squared:                       0.982
-Model:                            OLS   Adj. R-squared:                  0.978
-Method:                 Least Squares   F-statistic:                     240.4
-Date:                Fri, 20 Jun 2025   Prob (F-statistic):               0.00
-Time:                        13:11:25   Log-Likelihood:                 93.174
-No. Observations:                 705   AIC:                             77.65
-Df Residuals:                     573   BIC:                             679.3
-Df Model:                         131
-Covariance Type:            nonrobust
-================================================================================
-=============================
-                                                coef    std err          t
-P>|t|      [0.025      0.975]
---------------------------------------------------------------------------------
------------------------------
-Intercept                                     9.3507      0.569     16.434
-0.000       8.233      10.468
-C(Gender)[T.Male]                            -0.0206      0.033     -0.633
-0.527      -0.085       0.043
-C(Academic\_Level)[T.High School]              0.3891      0.134      2.898
-0.004       0.125       0.653
-C(Academic\_Level)[T.Undergraduate]           -0.1196      0.049     -2.428
-0.015      -0.216      -0.023
-C(Country)[T.Albania]                        -0.2120      0.356     -0.595
-0.552      -0.911       0.487
-C(Country)[T.Andorra]                        -0.8408      0.398     -2.113
-0.035      -1.622      -0.059
-C(Country)[T.Argentina]                      -0.7674      0.397     -1.932
-0.054      -1.548       0.013
-C(Country)[T.Armenia]                         0.2418      0.372      0.651
-0.515      -0.488       0.972
-C(Country)[T.Australia]                      -0.2661      0.290     -0.917
-0.360      -0.836       0.304
-C(Country)[T.Austria]                        -0.0931      0.355     -0.262
-0.793      -0.791       0.605
-C(Country)[T.Azerbaijan]                     -0.1847      0.375     -0.493
-0.622      -0.921       0.552
-C(Country)[T.Bahamas]                        -0.1098      0.355     -0.309
-0.757      -0.807       0.587
-C(Country)[T.Bahrain]                        -0.0401      0.337     -0.119
-0.905      -0.701       0.621
-C(Country)[T.Bangladesh]                     -0.2091      0.293     -0.713
-0.476      -0.785       0.367
-C(Country)[T.Belarus]                        -0.0406      0.353     -0.115
-0.908      -0.734       0.653
-C(Country)[T.Belgium]                        -0.7351      0.397     -1.851
-0.065      -1.515       0.045
-C(Country)[T.Bhutan]                         -1.0479      0.413     -2.539
-0.011      -1.859      -0.237
-C(Country)[T.Bolivia]                         0.1017      0.336      0.303
-0.762      -0.558       0.761
-C(Country)[T.Bosnia]                          0.0772      0.335      0.231
-0.818      -0.580       0.735
-C(Country)[T.Brazil]                          0.1260      0.307      0.410
-0.682      -0.478       0.730
-C(Country)[T.Bulgaria]                        0.0314      0.353      0.089
-0.929      -0.662       0.725
-C(Country)[T.Canada]                         -0.1100      0.291     -0.378
-0.705      -0.681       0.461
-C(Country)[T.Chile]                           0.0080      0.337      0.024
-0.981      -0.653       0.669
-C(Country)[T.China]                          -0.1140      0.357     -0.320
-0.749      -0.814       0.586
-C(Country)[T.Colombia]                       -0.1785      0.374     -0.477
-0.633      -0.913       0.556
-C(Country)[T.Costa Rica]                     -0.6355      0.398     -1.598
-0.110      -1.416       0.145
-C(Country)[T.Croatia]                         0.0173      0.376      0.046
-0.963      -0.721       0.755
-C(Country)[T.Cyprus]                          0.7159      0.355      2.015
-0.044       0.018       1.414
-C(Country)[T.Czech Republic]                 -0.7033      0.455     -1.545
-0.123      -1.598       0.191
-C(Country)[T.Denmark]                        -0.5674      0.289     -1.963
-0.050      -1.135       0.000
-C(Country)[T.Ecuador]                         0.2463      0.373      0.661
-0.509      -0.486       0.979
-C(Country)[T.Egypt]                           0.7183      0.374      1.918
-0.056      -0.017       1.454
-C(Country)[T.Estonia]                        -0.0319      0.356     -0.090
-0.929      -0.731       0.667
-C(Country)[T.Finland]                        -0.3273      0.299     -1.095
-0.274      -0.914       0.260
-C(Country)[T.France]                         -0.3180      0.289     -1.100
-0.272      -0.886       0.250
-C(Country)[T.Georgia]                        -0.1780      0.353     -0.504
-0.615      -0.872       0.516
-C(Country)[T.Germany]                        -0.4435      0.290     -1.528
-0.127      -1.013       0.126
-C(Country)[T.Ghana]                          -0.5829      0.430     -1.357
-0.175      -1.427       0.261
-C(Country)[T.Greece]                         -0.3518      0.375     -0.939
-0.348      -1.088       0.384
-C(Country)[T.Hong Kong]                      -0.1772      0.374     -0.473
-0.636      -0.912       0.558
-C(Country)[T.Hungary]                        -0.0934      0.356     -0.262
-0.793      -0.793       0.606
-C(Country)[T.Iceland]                        -0.0594      0.355     -0.167
-0.867      -0.757       0.638
-C(Country)[T.India]                          -0.0243      0.288     -0.084
-0.933      -0.591       0.542
-C(Country)[T.Indonesia]                      -0.7948      0.372     -2.139
-0.033      -1.524      -0.065
-C(Country)[T.Iraq]                            0.0839      0.356      0.236
-0.814      -0.614       0.782
-C(Country)[T.Ireland]                        -0.2053      0.292     -0.703
-0.482      -0.779       0.368
-C(Country)[T.Israel]                          0.2136      0.378      0.566
-0.572      -0.528       0.955
-C(Country)[T.Italy]                          -0.2667      0.289     -0.924
-0.356      -0.834       0.300
-C(Country)[T.Jamaica]                        -0.5150      0.390     -1.322
-0.187      -1.280       0.250
-C(Country)[T.Japan]                          -0.5942      0.302     -1.964
-0.050      -1.188   -8.64e-05
-C(Country)[T.Jordan]                         -0.2826      0.375     -0.753
-0.452      -1.019       0.454
-C(Country)[T.Kazakhstan]                     -0.3910      0.431     -0.907
-0.365      -1.238       0.456
-C(Country)[T.Kenya]                          -0.1924      0.377     -0.510
-0.610      -0.934       0.549
-C(Country)[T.Kosovo]                         -0.7311      0.399     -1.831
-0.068      -1.516       0.053
-C(Country)[T.Kuwait]                         -1.2400      0.455     -2.726
-0.007      -2.134      -0.346
-C(Country)[T.Kyrgyzstan]                     -0.3387      0.378     -0.896
-0.370      -1.081       0.403
-C(Country)[T.Latvia]                         -1.0539      0.456     -2.313
-0.021      -1.949      -0.159
-C(Country)[T.Lebanon]                         0.2750      0.392      0.701
-0.483      -0.495       1.045
-C(Country)[T.Liechtenstein]                   0.2941      0.397      0.740
-0.459      -0.486       1.074
-C(Country)[T.Lithuania]                      -0.4192      0.377     -1.112
-0.267      -1.160       0.321
-C(Country)[T.Luxembourg]                     -1.0862      0.456     -2.384
-0.017      -1.981      -0.191
-C(Country)[T.Malaysia]                        0.0926      0.298      0.311
-0.756      -0.493       0.678
-C(Country)[T.Maldives]                        0.1774      0.293      0.605
-0.545      -0.398       0.753
-C(Country)[T.Malta]                          -0.1255      0.355     -0.354
-0.723      -0.822       0.571
-C(Country)[T.Mexico]                          0.0045      0.294      0.015
-0.988      -0.573       0.582
-C(Country)[T.Moldova]                        -0.1110      0.373     -0.297
-0.766      -0.845       0.623
-C(Country)[T.Monaco]                       4.051e-05      0.358      0.000
-1.000      -0.702       0.702
-C(Country)[T.Montenegro]                     -0.3181      0.376     -0.847
-0.397      -1.056       0.420
-C(Country)[T.Morocco]                        -0.1116      0.376     -0.297
-0.766      -0.849       0.626
-C(Country)[T.Nepal]                           0.0687      0.292      0.235
-0.814      -0.505       0.643
-C(Country)[T.Netherlands]                    -0.5555      0.298     -1.865
-0.063      -1.140       0.029
-C(Country)[T.New Zealand]                    -0.3966      0.301     -1.317
-0.188      -0.988       0.195
-C(Country)[T.Nigeria]                        -0.6951      0.372     -1.867
-0.062      -1.426       0.036
-C(Country)[T.North Macedonia]                 0.3890      0.435      0.893
-0.372      -0.466       1.244
-C(Country)[T.Norway]                         -0.2855      0.399     -0.715
-0.475      -1.069       0.498
-C(Country)[T.Oman]                            0.0234      0.374      0.063
-0.950      -0.712       0.759
-C(Country)[T.Pakistan]                       -0.3729      0.295     -1.266
-0.206      -0.951       0.206
-C(Country)[T.Panama]                         -0.3362      0.378     -0.891
-0.374      -1.078       0.405
-C(Country)[T.Paraguay]                       -0.2742      0.375     -0.731
-0.465      -1.011       0.462
-C(Country)[T.Peru]                           -0.1782      0.374     -0.477
-0.633      -0.912       0.555
-C(Country)[T.Philippines]                    -0.6004      0.429     -1.399
-0.162      -1.443       0.242
-C(Country)[T.Poland]                         -0.1304      0.292     -0.447
-0.655      -0.704       0.443
-C(Country)[T.Portugal]                       -0.2106      0.374     -0.564
-0.573      -0.944       0.523
-C(Country)[T.Qatar]                          -0.1934      0.375     -0.516
-0.606      -0.929       0.543
-C(Country)[T.Romania]                         0.1633      0.375      0.435
-0.663      -0.573       0.900
-C(Country)[T.Russia]                         -0.2039      0.299     -0.683
-0.495      -0.790       0.383
-C(Country)[T.San Marino]                      0.0751      0.355      0.211
-0.833      -0.623       0.773
-C(Country)[T.Serbia]                          0.6789      0.374      1.815
-0.070      -0.056       1.413
-C(Country)[T.Singapore]                      -0.1576      0.302     -0.521
-0.602      -0.751       0.436
-C(Country)[T.Slovakia]                       -1.0157      0.353     -2.876
-0.004      -1.709      -0.322
-C(Country)[T.Slovenia]                       -0.9038      0.398     -2.271
-0.024      -1.685      -0.122
-C(Country)[T.South Africa]                    0.0162      0.354      0.046
-0.963      -0.679       0.712
-C(Country)[T.South Korea]                    -0.9794      0.376     -2.605
-0.009      -1.718      -0.241
-C(Country)[T.Spain]                           0.0136      0.292      0.047
-0.963      -0.561       0.588
-C(Country)[T.Sri Lanka]                      -0.2135      0.291     -0.735
-0.463      -0.784       0.357
-C(Country)[T.Sweden]                         -0.3563      0.357     -0.998
-0.319      -1.057       0.345
-C(Country)[T.Switzerland]                    -0.4507      0.288     -1.563
-0.119      -1.017       0.116
-C(Country)[T.Syria]                          -0.6736      0.397     -1.696
-0.090      -1.454       0.106
-C(Country)[T.Taiwan]                          0.0677      0.356      0.190
-0.849      -0.631       0.766
-C(Country)[T.Tajikistan]                     -0.0208      0.396     -0.053
-0.958      -0.798       0.756
-C(Country)[T.Thailand]                       -0.7113      0.372     -1.911
-0.057      -1.443       0.020
-C(Country)[T.Trinidad]                       -0.7836      0.397     -1.972
-0.049      -1.564      -0.003
-C(Country)[T.Turkey]                         -0.0371      0.289     -0.128
-0.898      -0.605       0.531
-C(Country)[T.UAE]                            -0.2384      0.303     -0.787
-0.431      -0.833       0.356
-C(Country)[T.UK]                             -0.1671      0.292     -0.572
-0.567      -0.741       0.407
-C(Country)[T.USA]                             0.2567      0.290      0.885
-0.377      -0.313       0.827
-C(Country)[T.Ukraine]                        -0.2163      0.356     -0.608
-0.543      -0.915       0.482
-C(Country)[T.Uruguay]                         0.7631      0.390      1.956
-0.051      -0.003       1.529
-C(Country)[T.Uzbekistan]                     -0.7641      0.372     -2.053
-0.041      -1.495      -0.033
-C(Country)[T.Vatican City]                   -0.0307      0.381     -0.080
-0.936      -0.780       0.718
-C(Country)[T.Venezuela]                      -0.3754      0.375     -1.001
-0.317      -1.112       0.361
-C(Country)[T.Vietnam]                         0.2427      0.379      0.640
-0.522      -0.502       0.987
-C(Country)[T.Yemen]                          -0.1525      0.376     -0.405
-0.685      -0.892       0.587
-C(Most\_Used\_Platform)[T.Instagram]           -0.0147      0.042     -0.350
-0.727      -0.097       0.068
-C(Most\_Used\_Platform)[T.KakaoTalk]           -0.0303      0.263     -0.115
-0.908      -0.547       0.486
-C(Most\_Used\_Platform)[T.LINE]                -0.5637      0.128     -4.401
-0.000      -0.815      -0.312
-C(Most\_Used\_Platform)[T.LinkedIn]            -0.2165      0.125     -1.735
-0.083      -0.462       0.029
-C(Most\_Used\_Platform)[T.Snapchat]             0.4112      0.175      2.349
-0.019       0.067       0.755
-C(Most\_Used\_Platform)[T.TikTok]               0.1011      0.042      2.379
-0.018       0.018       0.185
-C(Most\_Used\_Platform)[T.Twitter]             -0.0883      0.061     -1.441
-0.150      -0.209       0.032
-C(Most\_Used\_Platform)[T.VKontakte]           -0.1038      0.120     -0.863
-0.389      -0.340       0.133
-C(Most\_Used\_Platform)[T.WeChat]              -0.1592      0.274     -0.582
-0.561      -0.697       0.378
-C(Most\_Used\_Platform)[T.WhatsApp]            -0.2782      0.059     -4.723
-0.000      -0.394      -0.163
-C(Most\_Used\_Platform)[T.YouTube]              0.0209      0.146      0.143
-0.887      -0.266       0.308
-C(Affects\_Academic\_Performance)[T.Yes]        0.6643      0.076      8.725
-0.000       0.515       0.814
-C(Relationship\_Status)[T.In Relationship]     0.1016      0.122      0.835
-0.404      -0.137       0.340
-C(Relationship\_Status)[T.Single]             -0.0435      0.121     -0.360
-0.719      -0.281       0.194
-Age                                          -0.0394      0.015     -2.637
-0.009      -0.069      -0.010
-Avg\_Daily\_Usage\_Hours                         0.0874      0.029      2.997
-0.003       0.030       0.145
-Sleep\_Hours\_Per\_Night                        -0.0744      0.026     -2.901
-0.004      -0.125      -0.024
-Mental\_Health\_Score                          -0.5453      0.033    -16.718
-0.000      -0.609      -0.481
-Conflicts\_Over\_Social\_Media                   0.4190      0.039     10.813
-0.000       0.343       0.495
-==============================================================================
-Omnibus:                       88.075   Durbin-Watson:                   2.111
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              768.322
-Skew:                           0.112   Prob(JB):                    1.45e-167
-Kurtosis:                       8.109   Cond. No.                     7.72e+03
+Omnibus:                       30.933   Durbin-Watson:                   2.050
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               41.689
+Skew:                           0.404   Prob(JB):                     8.86e-10
+Kurtosis:                       3.877   Cond. No.                         658.
 ==============================================================================
 
 Notes:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly
-specified.
-[2] The condition number is large, 7.72e+03. This might indicate that there are
-strong multicollinearity or other numerical problems.
+[1] Standard Errors are heteroscedasticity robust (HC3)
     \end{Verbatim}
-
-    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\subsection{VIF Evaluation}\label{vif-evaluation}
-
-\begin{itemize}
-\tightlist
-\item
-  모델 1: 모든 변수 VIF \textless{} 10 (안정적)
-\item
-  모델 2: 국가 더미 변수와 SNS 플랫폼 더미 중 다수 VIF \textgreater{} 30
-  → \textbf{다중공선성 존재}
-\end{itemize}
-
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{5}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{k}{def} \PY{n+nf}{compute\PYZus{}vif}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{p}{:}
-    \PY{n}{vif\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{)}
-    \PY{n}{vif\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Variable}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{X}\PY{o}{.}\PY{n}{columns}
-    \PY{n}{vif\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{VIF}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{[}\PY{n}{variance\PYZus{}inflation\PYZus{}factor}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{values}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{]}
-    \PY{k}{return} \PY{n}{vif\PYZus{}data}
-
-\PY{c+c1}{\PYZsh{} 모델 1의 VIF}
-\PY{n}{vif\PYZus{}model1} \PY{o}{=} \PY{n}{compute\PYZus{}vif}\PY{p}{(}\PY{n}{X1}\PY{p}{)}
-
-\PY{c+c1}{\PYZsh{} 모델 2의 VIF}
-\PY{n}{vif\PYZus{}model2} \PY{o}{=} \PY{n}{compute\PYZus{}vif}\PY{p}{(}\PY{n}{X2}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
-
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{6}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{vif\PYZus{}model1}
-\end{Verbatim}
-\end{tcolorbox}
-
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{6}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-                      Variable         VIF
-0                    Intercept  784.929070
-1                          Age    1.040674
-2        Avg\_Daily\_Usage\_Hours    4.292493
-3        Sleep\_Hours\_Per\_Night    2.789703
-4          Mental\_Health\_Score    5.652000
-5  Conflicts\_Over\_Social\_Media    5.646419
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{7}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{vif\PYZus{}model2}\PY{p}{[}\PY{n}{vif\PYZus{}model2}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{VIF}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mi}{10}\PY{p}{]}
-\end{Verbatim}
-\end{tcolorbox}
-
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{7}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-                                      Variable          VIF
-0                                    Intercept  4126.759655
-8                      C(Country)[T.Australia]    20.894388
-13                    C(Country)[T.Bangladesh]    30.179427
-19                        C(Country)[T.Brazil]    13.512929
-21                        C(Country)[T.Canada]    49.472485
-23                         C(Country)[T.China]    35.952642
-29                       C(Country)[T.Denmark]    39.242054
-33                       C(Country)[T.Finland]    12.774641
-34                        C(Country)[T.France]    39.252159
-36                       C(Country)[T.Germany]    20.894008
-42                         C(Country)[T.India]    73.739436
-45                       C(Country)[T.Ireland]    40.054430
-47                         C(Country)[T.Italy]    30.699972
-49                         C(Country)[T.Japan]    33.704552
-61                      C(Country)[T.Malaysia]    12.705127
-62                      C(Country)[T.Maldives]    28.716710
-64                        C(Country)[T.Mexico]    40.549718
-69                         C(Country)[T.Nepal]    28.536989
-70                   C(Country)[T.Netherlands]    12.684577
-71                   C(Country)[T.New Zealand]    12.976770
-76                      C(Country)[T.Pakistan]    29.007747
-81                        C(Country)[T.Poland]    24.117600
-85                        C(Country)[T.Russia]    32.851391
-88                     C(Country)[T.Singapore]    13.071947
-92                   C(Country)[T.South Korea]    32.612125
-93                         C(Country)[T.Spain]    40.142431
-94                     C(Country)[T.Sri Lanka]    28.225124
-96                   C(Country)[T.Switzerland]    39.030581
-102                       C(Country)[T.Turkey]    39.296791
-103                          C(Country)[T.UAE]    13.114758
-104                           C(Country)[T.UK]    32.878944
-105                          C(Country)[T.USA]    57.441661
-114         C(Most\_Used\_Platform)[T.KakaoTalk]    14.743567
-121            C(Most\_Used\_Platform)[T.WeChat]    19.868001
-124     C(Affects\_Academic\_Performance)[T.Yes]    16.975742
-125  C(Relationship\_Status)[T.In Relationship]    45.612877
-126           C(Relationship\_Status)[T.Single]    46.226892
-128                      Avg\_Daily\_Usage\_Hours    17.114615
-129                      Sleep\_Hours\_Per\_Night    10.639188
-130                        Mental\_Health\_Score    16.540484
-131                Conflicts\_Over\_Social\_Media    17.537509
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\subsection{Optimal OLS Regression}\label{optimal-ols-regression}
-
-\begin{itemize}
-\tightlist
-\item
-  회귀 모형: Addicted\_Score \textasciitilde{} Sleep\_Hours\_Per\_Night
-  + Mental\_Health\_Score + Conflicts\_Over\_Social\_Media
-\item
-  회귀 계수:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Sleep\_Hours\_Per\_Night : \texttt{21.118}
-  \item
-    Mental\_Health\_Score : \texttt{71.619}
-  \item
-    Conflicts\_Over\_Social\_Media: \texttt{58.084}
-  \end{itemize}
-\item
-  유의 확률:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Sleep\_Hours\_Per\_Night : \texttt{p\textless{}0.0001***}
-  \item
-    Mental\_Health\_Score : \texttt{p\textless{}0.0001***}
-  \item
-    Conflicts\_Over\_Social\_Media: \texttt{p\textless{}0.0001***}
-  \end{itemize}
-\end{itemize}
-
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{8}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{model1\PYZus{}formula} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score \PYZti{} Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night + Mental\PYZus{}Health\PYZus{}Score + Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}
-\PY{n}{model1\PYZus{}formula\PYZus{}fit} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{o}{.}\PY{n}{from\PYZus{}formula}\PY{p}{(}\PY{n}{model1\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
-
-\PY{n}{anova\PYZus{}results\PYZus{}fixed} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{stats}\PY{o}{.}\PY{n}{anova\PYZus{}lm}\PY{p}{(}\PY{n}{model1\PYZus{}formula\PYZus{}fit}\PY{p}{,} \PY{n}{typ}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
-\PY{n}{anova\PYZus{}results\PYZus{}fixed}
-\end{Verbatim}
-\end{tcolorbox}
-
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{8}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-                                sum\_sq     df           F        PR(>F)
-Sleep\_Hours\_Per\_Night        21.117762    1.0  150.226194  1.977604e-31
-Mental\_Health\_Score          71.618590    1.0  509.475774  3.266240e-85
-Conflicts\_Over\_Social\_Media  58.083739    1.0  413.192413  1.438482e-72
-Residual                     98.541744  701.0         NaN           NaN
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\subsection{Model Diagnostics}\label{model-diagnostics}
-
-\subsubsection{1. Residual Analysis}\label{residual-analysis}
-
-최종 OLS 회귀 모형
-(\texttt{Addicted\_Score\ \textasciitilde{}\ Sleep\ +\ Mental\_Health\ +\ Conflict})의
-적합도를 검토하기 위해 잔차 분석을 수행하였다.
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.2778}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.7222}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-그래프 유형
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-해석
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-\textbf{Q--Q Plot} & 잔차의 정규성 가정을 시각적으로 검토한 결과,
-대부분의 점들이 45도 대각선을 어긋남. 이를 통해 잔차 정규성이 기각됐음을
-알 수 있음 \\
-\textbf{Residuals vs Fitted Plot} & 잔차와 예측값 간의 산점도 분석 결과,
-\textbf{특정한 패턴이 보이지 않아 선형성 가정 충족}. 또한, 잔차의 분산이
-일정하게 퍼져 있어 \textbf{등분산성(homoscedasticity) 가정도 만족}하는
-것으로 보임. \\
-\textbf{Scale-Location Plot} & 제곱근한 표준화 잔차와 예측값 사이의
-관계에서 점들이 무작위로 분포되어 있어 \textbf{등분산성이 다시 한 번
-확인}됨. \\
-\textbf{Cook's Distance Plot} & 영향력 높은 관측치를 확인하기 위해
-Cook's Distance를 시각화한 결과, 기준선(4/n)을 초과하는 관측치가 많이
-관측됨. \textbf{특별히 통제해야 할 이상치(outlier)가 상당수}. \\
-\end{longtable}
-
-\textbf{→ 결론}: 전반적으로 회귀모형은 \textbf{잔차 정규성이 기각되어,}
-추가적인 분석에 대한 고려 필요
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\subsubsection{2. Histogram of
-Addicted\_Score}\label{histogram-of-addicted_score}
-
-종속 변수인 \texttt{Addicted\_Score}에 대한 분포를 시각화하였다.
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{형태}: 히스토그램은 \textbf{2개의 분포가 겹친 형태}를 띔.
-\item
-  \textbf{해석}:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    중독 점수읩 분포는 쌍봉 형태로, \textbf{2개의 분포로 분리}해서
-    분석하는 것이 가능할 것으로 추측.
-  \end{itemize}
-\end{itemize}
-
-\textbf{→ 결론}: 종속 변수를 2개의 분포로 분리하여 분석하는 작업 필요
-
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{9}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{k}{def} \PY{n+nf}{resid\PYZus{}plot}\PY{p}{(}\PY{n}{model}\PY{p}{)}\PY{p}{:}
-    \PY{n}{resid} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{resid}                               
-    \PY{n}{fitted} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{fittedvalues}
-    \PY{n}{std\PYZus{}resid} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}influence}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{resid\PYZus{}studentized\PYZus{}internal}
-    \PY{n}{cooks\PYZus{}d} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}influence}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{cooks\PYZus{}distance}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
-    
-    \PY{c+c1}{\PYZsh{} (a) Q–Q plot ― 정규성}
-    \PY{n}{fig}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
-    \PY{n}{qqplot}\PY{p}{(}\PY{n}{resid}\PY{p}{,} \PY{n}{line}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{45}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Q\PYZhy{}Q Plot}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-
-    \PY{c+c1}{\PYZsh{} (b) Residuals vs Fitted ― 선형성·등분산성}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{fitted}\PY{p}{,} \PY{n}{resid}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.7}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{axhline}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{ls}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Fitted values}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Residuals}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Residuals vs Fitted}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-
-    \PY{c+c1}{\PYZsh{} (c) Scale–Location (√|표준화 잔차| vs Fitted) ― 등분산성}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{fitted}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{abs}\PY{p}{(}\PY{n}{std\PYZus{}resid}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.7}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Fitted values}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{√|Standardized Residuals|}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Scale\PYZhy{}Location}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-
-    \PY{c+c1}{\PYZsh{} (d) Cook’s Distance ― 영향력 관측치}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{stem}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{cooks\PYZus{}d}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{cooks\PYZus{}d}\PY{p}{,} \PY{n}{markerfmt}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{,}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Observation index}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cook’s Distance}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cook’s Distance}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-    \PY{c+c1}{\PYZsh{} 기준선: 4/n}
-    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{axhline}\PY{p}{(}\PY{l+m+mi}{4} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)}\PY{p}{,} \PY{n}{ls}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-
-    \PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
-    \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{10}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{resid\PYZus{}plot}\PY{p}{(}\PY{n}{model1\PYZus{}formula\PYZus{}fit}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{sns_addiction_regression_files/sns_addiction_regression_17_0.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{11}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{6}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}\PY{p}{)}
-\PY{n}{plt}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{,} \PY{n}{edgecolor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{black}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Histogram of Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Frequency}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n}{plt}\PY{o}{.}\PY{n}{grid}\PY{p}{(}\PY{k+kc}{True}\PY{p}{)}
-\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{sns_addiction_regression_files/sns_addiction_regression_18_0.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\subsection{Gausian Mixture Method}\label{gausian-mixture-method}
-
-\begin{itemize}
-\tightlist
-\item
-  \texttt{Addicted\_Score} 기준으로 2개의 그룹으로 분류:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Group 0: 중독 낮음 (N=236)
-  \item
-    Group 1: 중독 높음 (N=469)
-  \end{itemize}
-\end{itemize}
-
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{12}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{gmm} \PY{o}{=} \PY{n}{GaussianMixture}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
-\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{gmm}\PY{o}{.}\PY{n}{fit\PYZus{}predict}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
-
-    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\subsection{Group-specific Regression Analysis after
-GMM}\label{group-specific-regression-analysis-after-gmm}
-
-GMM(Gaussian Mixture Model)을 활용하여 분리한 그룹에 대해 각각 회귀
-분석을 진행하였다. 각 그룹에 대해 동일한 회귀식을 적용하였으며, 이후
-회귀 계수를 비교함으로써 독립 변수와 종속 변수의 관계를 파악했다. 회귀
-계수 비교는 z-test와 유사한
-방법(\(\frac{b_1 - b_2}{\sqrt{se_1^2 + se_2^2}}\))으로 진행했다.
-
-분석은 다음 순서로 진행하였다.
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  수치형 변수로만 회귀
-\item
-  성별 변수를 포함한 회귀
-\item
-  학업 성과 영향 여부 변수를 포함한 회귀
-\item
-  학업 수준 변수를 포함한 회귀
-\end{enumerate}
-
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{13}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{reg\PYZus{}vars} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{group0} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{]}
-\PY{n}{group1} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{]}
-
-
-\PY{n}{X0} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{group0}\PY{p}{[}\PY{n}{reg\PYZus{}vars}\PY{p}{]}\PY{p}{)}
-\PY{n}{y0} \PY{o}{=} \PY{n}{group0}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{X1} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{group1}\PY{p}{[}\PY{n}{reg\PYZus{}vars}\PY{p}{]}\PY{p}{)}
-\PY{n}{y1} \PY{o}{=} \PY{n}{group1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{model0} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y0}\PY{p}{,} \PY{n}{X0}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
-\PY{n}{model1} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y1}\PY{p}{,} \PY{n}{X1}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
-
-\PY{c+c1}{\PYZsh{} 회귀 계수 비교 (계수 차이 검정 \PYZhy{} z\PYZhy{}test 유사)}
-\PY{c+c1}{\PYZsh{} 계산: (b1 \PYZhy{} b2) / sqrt(se1\PYZca{}2 + se2\PYZca{}2)}
-\PY{n}{coef\PYZus{}diff} \PY{o}{=} \PY{n}{model0}\PY{o}{.}\PY{n}{params} \PY{o}{\PYZhy{}} \PY{n}{model1}\PY{o}{.}\PY{n}{params}
-\PY{n}{se\PYZus{}diff} \PY{o}{=} \PY{p}{(}\PY{n}{model0}\PY{o}{.}\PY{n}{bse} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2} \PY{o}{+} \PY{n}{model1}\PY{o}{.}\PY{n}{bse} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mf}{0.5}
-\PY{n}{z\PYZus{}scores} \PY{o}{=} \PY{n}{coef\PYZus{}diff} \PY{o}{/} \PY{n}{se\PYZus{}diff}
-\PY{n}{p\PYZus{}values} \PY{o}{=} \PY{l+m+mi}{2} \PY{o}{*} \PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{stats}\PY{o}{.}\PY{n}{norm}\PY{o}{.}\PY{n}{cdf}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{z\PYZus{}scores}\PY{p}{)}\PY{p}{)}\PY{p}{)}
-
-\PY{n}{comparison\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Variable}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{coef\PYZus{}diff}\PY{o}{.}\PY{n}{index}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Coef\PYZus{}Diff}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{coef\PYZus{}diff}\PY{o}{.}\PY{n}{values}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Z\PYZhy{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{z\PYZus{}scores}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{P\PYZhy{}Value}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{p\PYZus{}values}
-\PY{p}{\PYZcb{}}\PY{p}{)}
-
-\PY{n}{comparison\PYZus{}df}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
-
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{13}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-                      Variable  Coef\_Diff   Z-Score       P-Value
-0                        const   0.036070  0.049258  9.607133e-01
-1          Mental\_Health\_Score  -0.281519 -4.975124  6.520589e-07
-2  Conflicts\_Over\_Social\_Media   0.125223  1.789641  7.351161e-02
-3        Sleep\_Hours\_Per\_Night   0.027682  0.618541  5.362187e-01
-4        Avg\_Daily\_Usage\_Hours  -0.096450 -2.153770  3.125825e-02
-5                          Age   0.054669  3.121060  1.802016e-03
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{14}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n+nb}{print}\PY{p}{(}\PY{n}{model0}\PY{o}{.}\PY{n}{pvalues}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{            }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{n}{model1}\PY{o}{.}\PY{n}{pvalues}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{model2}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-const                          2.722547e-40
-Mental\_Health\_Score            3.031636e-42
-Conflicts\_Over\_Social\_Media    1.994067e-20
-Sleep\_Hours\_Per\_Night          2.795860e-04
-Avg\_Daily\_Usage\_Hours          7.247532e-01
-Age                            2.001210e-02
-dtype: float64
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:         Addicted\_Score   R-squared:                       0.969
+Model:                            OLS   Adj. R-squared:                  0.968
+Method:                 Least Squares   F-statistic:                     1704.
+Date:                Thu, 10 Sep 2026   Prob (F-statistic):               0.00
+Time:                        16:04:59   Log-Likelihood:                -103.74
+No. Observations:                 704   AIC:                             253.5
+Df Residuals:                     681   BIC:                             358.3
+Df Model:                          22
+Covariance Type:                  HC3
+================================================================================
+=============================
+                                                coef    std err          z
+P>|z|      [0.025      0.975]
+--------------------------------------------------------------------------------
+-----------------------------
+Intercept                                     9.8473      0.506     19.453
+0.000       8.855      10.839
+C(Gender)[T.Male]                            -0.0715      0.030     -2.399
+0.016      -0.130      -0.013
+C(Academic\_Level)[T.High School]             -0.1766      0.113     -1.562
+0.118      -0.398       0.045
+C(Academic\_Level)[T.Undergraduate]           -0.1889      0.050     -3.741
+0.000      -0.288      -0.090
+C(Most\_Used\_Platform)[T.Instagram]           -0.0301      0.035     -0.870
+0.384      -0.098       0.038
+C(Most\_Used\_Platform)[T.KakaoTalk]           -0.8587      0.054    -16.008
+0.000      -0.964      -0.754
+C(Most\_Used\_Platform)[T.LINE]                -0.8951      0.058    -15.538
+0.000      -1.008      -0.782
+C(Most\_Used\_Platform)[T.LinkedIn]            -0.0387      0.084     -0.460
+0.646      -0.204       0.126
+C(Most\_Used\_Platform)[T.Snapchat]             0.0813      0.171      0.475
+0.635      -0.254       0.416
+C(Most\_Used\_Platform)[T.TikTok]               0.1436      0.036      3.965
+0.000       0.073       0.215
+C(Most\_Used\_Platform)[T.Twitter]             -0.2014      0.047     -4.253
+0.000      -0.294      -0.109
+C(Most\_Used\_Platform)[T.VKontakte]           -0.0374      0.049     -0.766
+0.444      -0.133       0.058
+C(Most\_Used\_Platform)[T.WeChat]              -0.0779      0.046     -1.679
+0.093      -0.169       0.013
+C(Most\_Used\_Platform)[T.WhatsApp]            -0.2616      0.045     -5.754
+0.000      -0.351      -0.173
+C(Most\_Used\_Platform)[T.YouTube]              0.4833      0.200      2.415
+0.016       0.091       0.875
+C(Affects\_Academic\_Performance)[T.Yes]        0.7509      0.055     13.565
+0.000       0.642       0.859
+C(Relationship\_Status)[T.In Relationship]    -0.0551      0.086     -0.639
+0.523      -0.224       0.114
+C(Relationship\_Status)[T.Single]             -0.1550      0.086     -1.795
+0.073      -0.324       0.014
+Age                                          -0.0577      0.015     -3.776
+0.000      -0.088      -0.028
+Avg\_Daily\_Usage\_Hours                         0.1641      0.027      6.072
+0.000       0.111       0.217
+Sleep\_Hours\_Per\_Night                        -0.1033      0.024     -4.366
+0.000      -0.150      -0.057
+Mental\_Health\_Score                          -0.5671      0.029    -19.637
+0.000      -0.624      -0.511
+Conflicts\_Over\_Social\_Media                   0.3550      0.043      8.248
+0.000       0.271       0.439
+==============================================================================
+Omnibus:                       66.662   Durbin-Watson:                   2.114
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              152.172
+Skew:                           0.535   Prob(JB):                     9.04e-34
+Kurtosis:                       5.010   Cond. No.                     1.04e+03
+==============================================================================
 
-const                          3.302736e-81
-Mental\_Health\_Score            2.598108e-43
-Conflicts\_Over\_Social\_Media    7.264723e-26
-Sleep\_Hours\_Per\_Night          1.379294e-13
-Avg\_Daily\_Usage\_Hours          4.906118e-04
-Age                            3.971120e-02
-dtype: float64
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC3)
+[2] The condition number is large, 1.04e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.
     \end{Verbatim}
 
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{15}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{report\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM Group 0}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM Group 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sample Size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{group0}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{group1}\PY{p}{)}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{R\PYZhy{}squared}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{model0}\PY{o}{.}\PY{n}{rsquared}\PY{p}{,} \PY{n}{model1}\PY{o}{.}\PY{n}{rsquared}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflict Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-\PY{p}{\PYZcb{}}\PY{p}{)}
-
-\PY{n}{report\PYZus{}df}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
-
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{15}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-         Group  Sample Size  R-squared  Mental\_Health Coef  Conflict Coef
-0  GMM Group 0          236   0.824165           -0.782232       0.580838
-1  GMM Group 1          469   0.862676           -0.500714       0.455615
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \subsubsection{1. 수치형 변수(Mental Health, Conflict, Usage Hours, Age
-포함) 회귀 분석
-결과}\label{uxc218uxce58uxd615-uxbcc0uxc218mental-health-conflict-usage-hours-age-uxd3ecuxd568-uxd68cuxadc0-uxbd84uxc11d-uxacb0uxacfc}
+    \textbf{관찰}
 
 \begin{itemize}
 \tightlist
 \item
-  Group 0(중독 낮음)에서 정신건강 점수의 부적 영향력이 훨씬 큼 →
-  정신적으로 안정된 학생일수록 중독에서 더욱 자유로움
+  모델 1에서 \texttt{Age}(p ≈ 0.7)와 \texttt{Avg\_Daily\_Usage\_Hours}(p
+  ≈ 0.4)는 다른 변수 통제 시 \textbf{유의하지 않다}.
+  \texttt{Avg\_Daily\_Usage\_Hours}의 단순 상관은 +0.83으로 크지만,
+  \texttt{Sleep}· \texttt{Mental\_Health}·\texttt{Conflicts}와 강하게
+  얽혀 있어 부분효과가 사라진다. → H4는 이 데이터에서 \textbf{지지되지
+  않는다}.
 \item
-  SNS 사용 시간이 높은 중독 그룹에서 중독 점수에 더 큰 영향을 미침
-\item
-  나이는 높은 중독 그룹에서 중독 점수를 더 낮추는 경향
+  모델 2의 범주형 항은 대부분 개별적으로 유의하지 않으며(아래), 조정
+  결정계수 증가분에 비해 파라미터 수가 급증한다.
 \end{itemize}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+    \hypertarget{uxd45cuxc900uxd654-uxacc4uxc218ux3b2-uxd6a8uxacfc-uxd06cuxae30-uxbe44uxad50}{%
+\subsubsection{표준화 계수(β) --- 효과 크기
+비교}\label{uxd45cuxc900uxd654-uxacc4uxc218ux3b2-uxd6a8uxacfc-uxd06cuxae30-uxbe44uxad50}}
+
+``어떤 요인의 영향이 가장 큰가''는 변수 스케일이 서로 다르므로(정신건강
+4--9, 갈등 0--5, 수면 3.8--9.6) \textbf{원계수가 아니라 표준화 계수}로
+비교해야 한다.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{std\PYZus{}b} \PY{o}{=} \PY{n}{standardized\PYZus{}betas}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{NUMERIC}\PY{p}{,} \PY{n}{df}\PY{p}{)}
+\PY{n}{std\PYZus{}b}\PY{o}{.}\PY{n}{abs}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{to\PYZus{}frame}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{|std\PYZus{}beta|}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{std\PYZus{}b}\PY{o}{.}\PY{n}{to\PYZus{}frame}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{std\PYZus{}beta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                             |std\_beta|  std\_beta
+Mental\_Health\_Score            0.469097 -0.469097
+Conflicts\_Over\_Social\_Media    0.400933  0.400933
+Sleep\_Hours\_Per\_Night          0.148937 -0.148937
+Avg\_Daily\_Usage\_Hours          0.016158  0.016158
+Age                            0.003391  0.003391
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{vif-uxc9c4uxb2e8-uxc808uxd3b8-uxc81cuxc678-uxc608uxce21uxbcc0uxc218-uxae30uxc900}{%
+\subsection{VIF 진단 (절편 제외, 예측변수
+기준)}\label{vif-uxc9c4uxb2e8-uxc808uxd3b8-uxc81cuxc678-uxc608uxce21uxbcc0uxc218-uxae30uxc900}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X1} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{NUMERIC}\PY{p}{]}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{모델 1 VIF}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{compute\PYZus{}vif}\PY{p}{(}\PY{n}{X1}\PY{p}{)}\PY{o}{.}\PY{n}{to\PYZus{}string}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+모델 1 VIF
+                   Variable      VIF
+        Mental\_Health\_Score 5.681350
+Conflicts\_Over\_Social\_Media 5.668544
+      Avg\_Daily\_Usage\_Hours 4.291639
+      Sleep\_Hours\_Per\_Night 2.791006
+                        Age 1.040677
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 모델 2 설계행렬(범주형 더미 포함, patsy가 기준범주 자동 제거)}
+\PY{n}{X2} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{model2\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{model}\PY{o}{.}\PY{n}{exog}
+\PY{n}{X2} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{X2}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{model2\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{model}\PY{o}{.}\PY{n}{exog\PYZus{}names}\PY{p}{)}
+\PY{n}{vif2} \PY{o}{=} \PY{n}{compute\PYZus{}vif}\PY{p}{(}\PY{n}{X2}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{모델 2 VIF ≥ 5 인 항}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{vif2}\PY{p}{[}\PY{n}{vif2}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{VIF}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mi}{5}\PY{p}{]}\PY{o}{.}\PY{n}{to\PYZus{}string}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+모델 2 VIF ≥ 5 인 항
+                                 Variable      VIF
+              Conflicts\_Over\_Social\_Media 8.073790
+C(Relationship\_Status)[T.In Relationship] 7.455263
+         C(Relationship\_Status)[T.Single] 7.405310
+                    Avg\_Daily\_Usage\_Hours 6.731017
+                      Mental\_Health\_Score 6.579929
+       C(Academic\_Level)[T.Undergraduate] 5.212175
+   C(Affects\_Academic\_Performance)[T.Yes] 5.118818
+    \end{Verbatim}
+
+    \begin{itemize}
+\tightlist
+\item
+  \textbf{모델 1}: 모든 VIF \textless{} 6.
+  \texttt{Avg\_Daily\_Usage\_Hours}의 VIF는 약 4로 임계값(10) 미만이다.
+  즉 이 변수를 최종 모형에서 제외하는 근거는 \textbf{다중공선성이 아니라
+  통계적 비유의}다.
+\item
+  \textbf{모델 2}: 범주형 더미,\texttt{Country}는 관측치가 희소한 수준이
+  많아 사실상 식별이 불안정하므로 주 모형에서 제외한다. 국가 효과가
+  관심사라면 \textbf{지역 단위로 묶거나 혼합효과(랜덤절편) 모형}을 써야
+  한다.
+\end{itemize}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{uxcd5cuxc885uxac04uxba85-uxbaa8uxd615-uxc120uxd0dd}{%
+\subsection{최종(간명) 모형
+선택}\label{uxcd5cuxc885uxac04uxba85-uxbaa8uxd615-uxc120uxd0dd}}
+
+후보 모형을 \textbf{조정 R², AIC, BIC, 10-겹 교차검증 RMSE/R²}로
+비교한다.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{candidates} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}full\PYZus{}numeric}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model1\PYZus{}formula}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}parsimonious}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score \PYZti{} Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night + Mental\PYZus{}Health\PYZus{}Score + Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}plus\PYZus{}usage}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}   \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score \PYZti{} Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night + Mental\PYZus{}Health\PYZus{}Score + Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media + Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}with\PYZus{}categ}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}   \PY{n}{model2\PYZus{}formula}\PY{p}{,}
+\PY{p}{\PYZcb{}}
+
+\PY{n}{rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{name}\PY{p}{,} \PY{n}{f} \PY{o+ow}{in} \PY{n}{candidates}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{ols} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{f}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+    \PY{n}{cv} \PY{o}{=} \PY{n}{cv\PYZus{}scores}\PY{p}{(}\PY{n}{f}\PY{p}{,} \PY{n}{df}\PY{p}{)}
+    \PY{n}{rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{name}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k\PYZus{}params}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{int}\PY{p}{(}\PY{n}{ols}\PY{o}{.}\PY{n}{df\PYZus{}model} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{adj\PYZus{}R2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{ols}\PY{o}{.}\PY{n}{rsquared\PYZus{}adj}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{AIC}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{ols}\PY{o}{.}\PY{n}{aic}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{BIC}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{ols}\PY{o}{.}\PY{n}{bic}\PY{p}{,}
+        \PY{o}{*}\PY{o}{*}\PY{n}{cv}\PY{p}{,}
+    \PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{model\PYZus{}cmp} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{rows}\PY{p}{)}\PY{o}{.}\PY{n}{set\PYZus{}index}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}
+\PY{n}{model\PYZus{}cmp}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                k\_params  adj\_R2       AIC       BIC  cv\_rmse   cv\_r2
+model
+M\_full\_numeric         6  0.9442  623.4435  650.7841   0.3759  0.9439
+M\_parsimonious         4  0.9443  620.4081  638.6352   0.3757  0.9440
+M\_plus\_usage           5  0.9443  621.5838  644.3677   0.3756  0.9440
+M\_with\_categ          23  0.9678  253.4817  358.2876   0.2898  0.9667
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \texttt{M\_parsimonious}(수면 + 정신건강 + 갈등)는
+\texttt{M\_full\_numeric} 대비 BIC가 더 낮고 교차검증 성능이 사실상
+동일하다(\texttt{Age}·\texttt{Usage}는 부분효과가 없어 표본 밖 성능에
+기여하지 않는다). 범주형을 추가한 \texttt{M\_with\_categ}는 교차검증
+RMSE가 더 낮아(0.38 → 0.29) 적합은 개선되지만, 이는 주로 일부 플랫폼
+더미(KakaoTalk·LINE 등, 이 합성 데이터의 생성 규칙이 만든 신호)에서 오며
+파라미터가 23개로 늘고 다중공선성도 커진다. \textbf{관심 가설의 변수는
+\texttt{M\_parsimonious}가 모두 담고 있으므로 이를 주 모형으로 삼고},
+범주형을 추가해도 핵심 계수가 흔들리지 않는지 별도로 확인한다(아래
+``핵심 계수 안정성'' 표).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{final\PYZus{}formula} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score \PYZti{} Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night + Mental\PYZus{}Health\PYZus{}Score + Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{final\PYZus{}ols} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{final\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}            \PY{c+c1}{\PYZsh{} 고전 SE}
+\PY{n}{final\PYZus{}hc3} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{final\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{cov\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HC3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} 강건 SE}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:         Addicted\_Score   R-squared:                       0.945
+Model:                            OLS   Adj. R-squared:                  0.944
+Method:                 Least Squares   F-statistic:                     3530.
+Date:                Thu, 10 Sep 2026   Prob (F-statistic):               0.00
+Time:                        16:04:59   Log-Likelihood:                -306.20
+No. Observations:                 704   AIC:                             620.4
+Df Residuals:                     700   BIC:                             638.6
+Df Model:                           3
+Covariance Type:                  HC3
+================================================================================
+===============
+                                  coef    std err          z      P>|z|
+[0.025      0.975]
+--------------------------------------------------------------------------------
+---------------
+Intercept                      10.2550      0.318     32.202      0.000
+9.631      10.879
+Sleep\_Hours\_Per\_Night          -0.2192      0.018    -12.074      0.000
+-0.255      -0.184
+Mental\_Health\_Score            -0.6789      0.032    -21.382      0.000
+-0.741      -0.617
+Conflicts\_Over\_Social\_Media     0.6724      0.038     17.480      0.000
+0.597       0.748
+==============================================================================
+Omnibus:                       32.591   Durbin-Watson:                   2.074
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               44.815
+Skew:                           0.413   Prob(JB):                     1.86e-10
+Kurtosis:                       3.919   Cond. No.                         195.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC3)
+    \end{Verbatim}
+
+    \hypertarget{uxacc4uxc218-uxd574uxc11d}{%
+\subsubsection{계수 해석}\label{uxacc4uxc218-uxd574uxc11d}}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{16}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{cat\PYZus{}vars1} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{group0} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{]}
-\PY{n}{group1} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{]}
-
-
-\PY{n}{X0} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{group0}\PY{p}{[}\PY{n}{cat\PYZus{}vars1}\PY{p}{]}\PY{p}{)}
-\PY{n}{X0} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X0}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{p}{)}
-\PY{n}{y0} \PY{o}{=} \PY{n}{group0}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{X1} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{group1}\PY{p}{[}\PY{n}{cat\PYZus{}vars1}\PY{p}{]}\PY{p}{)}
-\PY{n}{X1} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X1}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{p}{)}
-\PY{n}{y1} \PY{o}{=} \PY{n}{group1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{gender\PYZus{}model0} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y0}\PY{p}{,} \PY{n}{X0}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
-\PY{n}{gender\PYZus{}model1} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y1}\PY{p}{,} \PY{n}{X1}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
-
-\PY{n}{coef\PYZus{}diff} \PY{o}{=} \PY{n}{gender\PYZus{}model0}\PY{o}{.}\PY{n}{params} \PY{o}{\PYZhy{}} \PY{n}{gender\PYZus{}model1}\PY{o}{.}\PY{n}{params}
-\PY{n}{se\PYZus{}diff} \PY{o}{=} \PY{p}{(}\PY{n}{gender\PYZus{}model0}\PY{o}{.}\PY{n}{bse} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2} \PY{o}{+} \PY{n}{gender\PYZus{}model1}\PY{o}{.}\PY{n}{bse} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mf}{0.5}
-\PY{n}{z\PYZus{}scores} \PY{o}{=} \PY{n}{coef\PYZus{}diff} \PY{o}{/} \PY{n}{se\PYZus{}diff}
-\PY{n}{p\PYZus{}values} \PY{o}{=} \PY{l+m+mi}{2} \PY{o}{*} \PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{stats}\PY{o}{.}\PY{n}{norm}\PY{o}{.}\PY{n}{cdf}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{z\PYZus{}scores}\PY{p}{)}\PY{p}{)}\PY{p}{)}
-
-\PY{n}{gender\PYZus{}comparison\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Variable}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{coef\PYZus{}diff}\PY{o}{.}\PY{n}{index}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Coef\PYZus{}Diff}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{coef\PYZus{}diff}\PY{o}{.}\PY{n}{values}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Z\PYZhy{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{z\PYZus{}scores}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{P\PYZhy{}Value}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{p\PYZus{}values}
+\PY{n}{focal} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{coef\PYZus{}tbl} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{coef}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{params}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HC3\PYZus{}se}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{bse}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{tvalues}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{p\PYZus{}value}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{pvalues}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ci\PYZus{}low}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{conf\PYZus{}int}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ci\PYZus{}high}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{conf\PYZus{}int}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}
 \PY{p}{\PYZcb{}}\PY{p}{)}
-
-\PY{n}{gender\PYZus{}comparison\PYZus{}df}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coef\PYZus{}Diff}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{abs}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{coef\PYZus{}tbl}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{std\PYZus{}beta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{standardized\PYZus{}betas}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{focal}\PY{p}{,} \PY{n}{df}\PY{p}{)}
+\PY{n}{coef\PYZus{}tbl}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
             \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
 \prompt{Out}{outcolor}{16}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-                      Variable  Coef\_Diff   Z-Score       P-Value
-4          Mental\_Health\_Score  -0.286187 -5.028398  4.945951e-07
-5  Conflicts\_Over\_Social\_Media   0.122351  1.742046  8.150040e-02
-2        Avg\_Daily\_Usage\_Hours  -0.097132 -2.164400  3.043366e-02
-1                          Age   0.060930  3.038488  2.377686e-03
-0                        const  -0.041202 -0.082765  9.340385e-01
-7                  Gender\_Male  -0.038588 -0.151024  8.799568e-01
-3        Sleep\_Hours\_Per\_Night   0.028826  0.642958  5.202516e-01
-6                Gender\_Female  -0.002614 -0.010662  9.914931e-01
+                                coef  HC3\_se        z  p\_value  ci\_low  ci\_high
+std\_beta
+Intercept                    10.2550  0.3185  32.2024      0.0  9.6308  10.8791
+NaN
+Sleep\_Hours\_Per\_Night        -0.2192  0.0182 -12.0743      0.0 -0.2548  -0.1836
+-0.1557
+Mental\_Health\_Score          -0.6789  0.0318 -21.3816      0.0 -0.7412  -0.6167
+-0.4723
+Conflicts\_Over\_Social\_Media   0.6724  0.0385  17.4795      0.0  0.5970   0.7478
+0.4059
 \end{Verbatim}
 \end{tcolorbox}
         
+    \begin{itemize}
+\tightlist
+\item
+  \texttt{Mental\_Health\_Score}: \textbf{−0.68} (수면·갈등 통제 시,
+  정신건강 1점 상승당 중독 −0.68점) --- H1 지지
+\item
+  \texttt{Conflicts\_Over\_Social\_Media}: \textbf{+0.67} --- H2 지지
+\item
+  \texttt{Sleep\_Hours\_Per\_Night}: \textbf{−0.22} --- H3 지지
+\item
+  표준화 계수 기준으로도 \textbar 정신건강\textbar(≈0.47) \textgreater{}
+  \textbar 갈등\textbar(≈0.41) \textgreater{}
+  \textbar 수면\textbar(≈0.16) 순서이며, HC3 유의확률은 모두 p
+  \textless{} 1e-10.
+\end{itemize}
+
+    \hypertarget{uxd575uxc2ec-uxacc4uxc218-uxc548uxc815uxc131-uxbc94uxc8fcuxd615-uxd1b5uxc81cuxbcc0uxc218-uxcd94uxac00-uxc2dc}{%
+\subsubsection{핵심 계수 안정성 --- 범주형 통제변수 추가
+시}\label{uxd575uxc2ec-uxacc4uxc218-uxc548uxc815uxc131-uxbc94uxc8fcuxd615-uxd1b5uxc81cuxbcc0uxc218-uxcd94uxac00-uxc2dc}}
+
+주 모형의 세 계수가 (a) 수치형 전체 모형, (b) 범주형 포함 모형에서
+어떻게 변하는지 확인한다.
+
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{17}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n+nb}{print}\PY{p}{(}\PY{n}{gender\PYZus{}model0}\PY{o}{.}\PY{n}{pvalues}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{            }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{n}{gender\PYZus{}model1}\PY{o}{.}\PY{n}{pvalues}\PY{p}{)}
+\PY{n}{stab} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}parsimonious (HC3)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{params}\PY{o}{.}\PY{n}{reindex}\PY{p}{(}\PY{n}{focal}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}full\PYZus{}numeric (HC3)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model1}\PY{o}{.}\PY{n}{params}\PY{o}{.}\PY{n}{reindex}\PY{p}{(}\PY{n}{focal}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}with\PYZus{}categ (HC3)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model2}\PY{o}{.}\PY{n}{params}\PY{o}{.}\PY{n}{reindex}\PY{p}{(}\PY{n}{focal}\PY{p}{)}\PY{p}{,}
+\PY{p}{\PYZcb{}}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}
+\PY{n}{stab}
 \end{Verbatim}
 \end{tcolorbox}
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-const                          9.284900e-39
-Age                            1.465422e-02
-Avg\_Daily\_Usage\_Hours          7.122043e-01
-Sleep\_Hours\_Per\_Night          3.179936e-04
-Mental\_Health\_Score            4.235684e-42
-Conflicts\_Over\_Social\_Media    3.440992e-20
-Gender\_Female                  8.836169e-40
-Gender\_Male                    2.926340e-37
-dtype: float64
-
-const                          1.027737e-78
-Age                            7.144387e-02
-Avg\_Daily\_Usage\_Hours          5.240078e-04
-Sleep\_Hours\_Per\_Night          1.666872e-13
-Mental\_Health\_Score            3.874843e-43
-Conflicts\_Over\_Social\_Media    1.395615e-25
-Gender\_Female                  1.195216e-80
-Gender\_Male                    2.196479e-75
-dtype: float64
-    \end{Verbatim}
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                             M\_parsimonious (HC3)  M\_full\_numeric (HC3)
+M\_with\_categ (HC3)
+Sleep\_Hours\_Per\_Night                     -0.2192               -0.2098
+-0.1033
+Mental\_Health\_Score                       -0.6789               -0.6743
+-0.5671
+Conflicts\_Over\_Social\_Media                0.6724                0.6642
+0.3550
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \textbf{정신 건강}·\textbf{수면} 계수는 세 명세에서 부호·크기가
+안정적이다. \textbf{갈등} 계수는 범주형 모형에서 약 0.67 → 0.36으로
+줄어드는데, 이는 이 합성 데이터에서 플랫폼(Instagram, Twitter 등)이
+갈등·중독과 함께 움직이도록 생성되어 분산 일부를 흡수하기 때문이다.
+부호와 유의성은 세 명세에서 모두 유지되므로 정성적 결론은 바뀌지 않으나,
+\textbf{갈등 계수의 정확한 크기는 어떤 통제변수를 넣느냐에 민감하다}는
+점은 명시해 둔다.
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{18}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{gender\PYZus{}report\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM Group 0}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM Group 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sample Size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{group0}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{group1}\PY{p}{)}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{R\PYZhy{}squared}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{gender\PYZus{}model0}\PY{o}{.}\PY{n}{rsquared}\PY{p}{,} \PY{n}{gender\PYZus{}model1}\PY{o}{.}\PY{n}{rsquared}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{gender\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{gender\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{gender\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{gender\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflict Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{gender\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{gender\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Gender\PYZus{}Male Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{gender\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Gender\PYZus{}Male}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{gender\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Gender\PYZus{}Male}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Gender\PYZus{}Female Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{gender\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Gender\PYZus{}Female}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{gender\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Gender\PYZus{}Female}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-\PY{p}{\PYZcb{}}\PY{p}{)}
-
-\PY{n}{gender\PYZus{}report\PYZus{}df}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media 계수의 p\PYZhy{}value:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}parsimonious}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}full\PYZus{}numeric}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model1}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{M\PYZus{}with\PYZus{}categ}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model2}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}
+\PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{18}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-         Group  Sample Size  R-squared  Mental\_Health Coef  Sleep\_Hours Coef  \textbackslash{}
-0  GMM Group 0          236   0.824718           -0.786878         -0.141854
-1  GMM Group 1          469   0.862676           -0.500691         -0.170680
-
-   Conflict Coef  Gender\_Male Coef  Gender\_Female Coef
-0       0.578027          3.228326            3.263811
-1       0.455676          3.266914            3.266425
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \subsubsection{2. 성별(Gender) 포함 회귀 분석
-결과}\label{uxc131uxbcc4gender-uxd3ecuxd568-uxd68cuxadc0-uxbd84uxc11d-uxacb0uxacfc}
-
-\begin{itemize}
-\tightlist
-\item
-  성별 변수는 중독 점수에 유의미한 영향 없음 → 본 연구에서는
-  \textbf{남녀 간 중독 정도 차이는 통계적으로 유의하지 않음}
-\item
-  정신건강 점수는 여전히 낮은 중독 그룹에서 훨씬 더 큰 부적 효과를 가짐
-\end{itemize}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+    \begin{Verbatim}[commandchars=\\\{\}]
+Conflicts\_Over\_Social\_Media 계수의 p-value:
+M\_parsimonious    2.051659e-68
+M\_full\_numeric    3.322960e-57
+M\_with\_categ      1.613856e-16
+dtype: float64
+    \end{Verbatim}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{19}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{cat\PYZus{}vars2} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Affects\PYZus{}Academic\PYZus{}Performance}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{group0} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{]}
-\PY{n}{group1} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{]}
-
-
-\PY{n}{X0} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{group0}\PY{p}{[}\PY{n}{cat\PYZus{}vars2}\PY{p}{]}\PY{p}{)}
-\PY{n}{X0} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X0}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{p}{)}
-\PY{n}{y0} \PY{o}{=} \PY{n}{group0}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{X1} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{group1}\PY{p}{[}\PY{n}{cat\PYZus{}vars2}\PY{p}{]}\PY{p}{)}
-\PY{n}{X1} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X1}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{p}{)}
-\PY{n}{y1} \PY{o}{=} \PY{n}{group1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{perf\PYZus{}model0} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y0}\PY{p}{,} \PY{n}{X0}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
-\PY{n}{perf\PYZus{}model1} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y1}\PY{p}{,} \PY{n}{X1}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
-
-\PY{n}{coef\PYZus{}diff} \PY{o}{=} \PY{n}{perf\PYZus{}model0}\PY{o}{.}\PY{n}{params} \PY{o}{\PYZhy{}} \PY{n}{perf\PYZus{}model1}\PY{o}{.}\PY{n}{params}
-\PY{n}{se\PYZus{}diff} \PY{o}{=} \PY{p}{(}\PY{n}{perf\PYZus{}model0}\PY{o}{.}\PY{n}{bse} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2} \PY{o}{+} \PY{n}{perf\PYZus{}model1}\PY{o}{.}\PY{n}{bse} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mf}{0.5}
-\PY{n}{z\PYZus{}scores} \PY{o}{=} \PY{n}{coef\PYZus{}diff} \PY{o}{/} \PY{n}{se\PYZus{}diff}
-\PY{n}{p\PYZus{}values} \PY{o}{=} \PY{l+m+mi}{2} \PY{o}{*} \PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{stats}\PY{o}{.}\PY{n}{norm}\PY{o}{.}\PY{n}{cdf}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{z\PYZus{}scores}\PY{p}{)}\PY{p}{)}\PY{p}{)}
-
-\PY{n}{perf\PYZus{}comparison\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Variable}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{coef\PYZus{}diff}\PY{o}{.}\PY{n}{index}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Coef\PYZus{}Diff}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{coef\PYZus{}diff}\PY{o}{.}\PY{n}{values}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Z\PYZhy{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{z\PYZus{}scores}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{P\PYZhy{}Value}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{p\PYZus{}values}
-\PY{p}{\PYZcb{}}\PY{p}{)}
-
-\PY{n}{perf\PYZus{}comparison\PYZus{}df}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coef\PYZus{}Diff}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{abs}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
-
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{19}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-                          Variable  Coef\_Diff    Z-Score       P-Value
-0  Affects\_Academic\_Performance\_No   6.410356  10.327672  0.000000e+00
-4              Mental\_Health\_Score  -0.276371  -4.893397  9.911002e-07
-3      Conflicts\_Over\_Social\_Media   0.092437   1.306091  1.915215e-01
-2            Avg\_Daily\_Usage\_Hours  -0.089511  -1.999806  4.552127e-02
-1                              Age   0.055552   3.181140  1.466966e-03
-5            Sleep\_Hours\_Per\_Night   0.028564   0.639405  5.225598e-01
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{20}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n+nb}{print}\PY{p}{(}\PY{n}{perf\PYZus{}model0}\PY{o}{.}\PY{n}{pvalues}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{            }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{n}{perf\PYZus{}model1}\PY{o}{.}\PY{n}{pvalues}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} ANOVA (Type II): 계수가 아니라 분산 분해 (설명을 명확히 분리)}
+\PY{n}{anova\PYZus{}tbl} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{stats}\PY{o}{.}\PY{n}{anova\PYZus{}lm}\PY{p}{(}\PY{n}{final\PYZus{}ols}\PY{p}{,} \PY{n}{typ}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{anova\PYZus{}tbl}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{※ 위 sum\PYZus{}sq 열은 }\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{제곱합}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{이며 회귀계수가 아님.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-Age                                2.001210e-02
-Avg\_Daily\_Usage\_Hours              7.247532e-01
-Sleep\_Hours\_Per\_Night              2.795860e-04
-Mental\_Health\_Score                3.031636e-42
-Conflicts\_Over\_Social\_Media        1.994067e-20
-Affects\_Academic\_Performance\_No    2.722547e-40
-dtype: float64
+                              sum\_sq     df         F  PR(>F)
+Sleep\_Hours\_Per\_Night        21.0147    1.0  149.5311     0.0
+Mental\_Health\_Score          71.6856    1.0  510.0819     0.0
+Conflicts\_Over\_Social\_Media  57.4215    1.0  408.5851     0.0
+Residual                     98.3762  700.0       NaN     NaN
 
-const                               1.158240e-82
-Age                                 3.180798e-02
-Avg\_Daily\_Usage\_Hours               1.357694e-03
-Sleep\_Hours\_Per\_Night               7.172399e-14
-Mental\_Health\_Score                 2.157065e-44
-Conflicts\_Over\_Social\_Media         1.766648e-27
-Affects\_Academic\_Performance\_No     1.247273e-78
-Affects\_Academic\_Performance\_Yes    9.514690e-76
-dtype: float64
+※ 위 sum\_sq 열은 '제곱합'이며 회귀계수가 아님.
     \end{Verbatim}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{model-diagnostics}{%
+\subsection{Model Diagnostics}\label{model-diagnostics}}
+
+\hypertarget{uxc794uxcc28-uxadf8uxb9bc}{%
+\subsubsection{1. 잔차 그림}\label{uxc794uxcc28-uxadf8uxb9bc}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{resid\PYZus{}plot}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{data}\PY{p}{)}\PY{p}{:}
+    \PY{n}{resid} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{resid}
+    \PY{n}{fitted} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{fittedvalues}
+    \PY{n}{infl} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}influence}\PY{p}{(}\PY{p}{)}
+    \PY{n}{std\PYZus{}resid} \PY{o}{=} \PY{n}{infl}\PY{o}{.}\PY{n}{resid\PYZus{}studentized\PYZus{}internal}
+    \PY{n}{cooks\PYZus{}d} \PY{o}{=} \PY{n}{infl}\PY{o}{.}\PY{n}{cooks\PYZus{}distance}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+    \PY{n}{fig}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{11}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+    \PY{n}{qqplot}\PY{p}{(}\PY{n}{resid}\PY{p}{,} \PY{n}{line}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{45}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fit}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Q\PYZhy{}Q plot (normality)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{fitted}\PY{p}{,} \PY{n}{resid}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{,} \PY{n}{s}\PY{o}{=}\PY{l+m+mi}{18}\PY{p}{)}
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{axhline}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{ls}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set}\PY{p}{(}\PY{n}{xlabel}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Fitted}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ylabel}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Residual}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+                 \PY{n}{title}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Residuals vs Fitted (linearity / homoskedasticity)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{fitted}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{abs}\PY{p}{(}\PY{n}{std\PYZus{}resid}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{,} \PY{n}{s}\PY{o}{=}\PY{l+m+mi}{18}\PY{p}{)}
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set}\PY{p}{(}\PY{n}{xlabel}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Fitted}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ylabel}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sqrt(|std resid|)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Scale\PYZhy{}Location (homoskedasticity)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{stem}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{cooks\PYZus{}d}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{cooks\PYZus{}d}\PY{p}{,} \PY{n}{markerfmt}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{,}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{axhline}\PY{p}{(}\PY{l+m+mi}{4} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{data}\PY{p}{)}\PY{p}{,} \PY{n}{ls}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{4/n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set}\PY{p}{(}\PY{n}{xlabel}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Observation}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ylabel}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cook}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s D}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cook}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s distance (influence)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{ax}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{resid\PYZus{}plot}\PY{p}{(}\PY{n}{final\PYZus{}ols}\PY{p}{,} \PY{n}{df}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{sns_addiction_regression_files/sns_addiction_regression_39_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{uxd615uxc2dd-uxac80uxc815}{%
+\subsubsection{2. 형식 검정}\label{uxd615uxc2dd-uxac80uxc815}}
+
+그림 해석에만 의존하지 않고 정규성·등분산·함수형태를 \textbf{형식
+검정}으로 확인한다.
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{21}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{perf\PYZus{}report\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM Group 0}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM Group 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sample Size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{group0}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{group1}\PY{p}{)}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{R\PYZhy{}squared}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{perf\PYZus{}model0}\PY{o}{.}\PY{n}{rsquared}\PY{p}{,} \PY{n}{perf\PYZus{}model1}\PY{o}{.}\PY{n}{rsquared}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{perf\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{perf\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{perf\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{perf\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflict Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{perf\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{perf\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{perf\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{perf\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Performance\PYZus{}No Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{perf\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Affects\PYZus{}Academic\PYZus{}Performance\PYZus{}No}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{perf\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Affects\PYZus{}Academic\PYZus{}Performance\PYZus{}No}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{jb\PYZus{}stat}\PY{p}{,} \PY{n}{jb\PYZus{}p}\PY{p}{,} \PY{n}{skew}\PY{p}{,} \PY{n}{kurt} \PY{o}{=} \PY{n}{jarque\PYZus{}bera}\PY{p}{(}\PY{n}{final\PYZus{}ols}\PY{o}{.}\PY{n}{resid}\PY{p}{)}
+\PY{n}{bp} \PY{o}{=} \PY{n}{het\PYZus{}breuschpagan}\PY{p}{(}\PY{n}{final\PYZus{}ols}\PY{o}{.}\PY{n}{resid}\PY{p}{,} \PY{n}{final\PYZus{}ols}\PY{o}{.}\PY{n}{model}\PY{o}{.}\PY{n}{exog}\PY{p}{)}
+\PY{n}{white} \PY{o}{=} \PY{n}{het\PYZus{}white}\PY{p}{(}\PY{n}{final\PYZus{}ols}\PY{o}{.}\PY{n}{resid}\PY{p}{,} \PY{n}{final\PYZus{}ols}\PY{o}{.}\PY{n}{model}\PY{o}{.}\PY{n}{exog}\PY{p}{)}
+\PY{n}{reset} \PY{o}{=} \PY{n}{linear\PYZus{}reset}\PY{p}{(}\PY{n}{final\PYZus{}ols}\PY{p}{,} \PY{n}{power}\PY{o}{=}\PY{l+m+mi}{3}\PY{p}{,} \PY{n}{test\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{fitted}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{use\PYZus{}f}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
 
-\PY{n}{perf\PYZus{}report\PYZus{}df}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
-
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{21}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-         Group  Sample Size  R-squared  Mental\_Health Coef  Sleep\_Hours Coef  \textbackslash{}
-0  GMM Group 0          236   0.824165           -0.782232         -0.143020
-1  GMM Group 1          469   0.864966           -0.505861         -0.171584
-
-   Conflict Coef  Age Coef  Performance\_No Coef
-0       0.580838  0.030678             9.834846
-1       0.488401 -0.024874             3.424490
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \subsubsection{3. 학업 성과 영향 여부 포함 회귀 분석
-결과}\label{uxd559uxc5c5-uxc131uxacfc-uxc601uxd5a5-uxc5ecuxbd80-uxd3ecuxd568-uxd68cuxadc0-uxbd84uxc11d-uxacb0uxacfc}
-
-\begin{itemize}
-\tightlist
-\item
-  중독 점수가 높은 그룹은 ``SNS가 학업에 영향 없다''고 인식하는 경향
-  강함 → \textbf{자기인식 왜곡} 가능성
-\item
-  중독 점수가 낮은 그룹은 학업 영향도, 정신건강 영향도 민감하게 인식하는
-  경향
-\end{itemize}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{22}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{cat\PYZus{}vars3} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Age}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Academic\PYZus{}Level}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{group0} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{]}
-\PY{n}{group1} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM\PYZus{}Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{]}
-
-
-\PY{n}{X0} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{group0}\PY{p}{[}\PY{n}{cat\PYZus{}vars3}\PY{p}{]}\PY{p}{)}
-\PY{n}{X0} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X0}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{p}{)}
-\PY{n}{y0} \PY{o}{=} \PY{n}{group0}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{X1} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{group1}\PY{p}{[}\PY{n}{cat\PYZus{}vars3}\PY{p}{]}\PY{p}{)}
-\PY{n}{X1} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X1}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{p}{)}
-\PY{n}{y1} \PY{o}{=} \PY{n}{group1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-
-\PY{n}{academic\PYZus{}model0} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y0}\PY{p}{,} \PY{n}{X0}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
-\PY{n}{academic\PYZus{}model1} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y1}\PY{p}{,} \PY{n}{X1}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
-
-\PY{n}{coef\PYZus{}diff} \PY{o}{=} \PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{params} \PY{o}{\PYZhy{}} \PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{params}
-\PY{n}{se\PYZus{}diff} \PY{o}{=} \PY{p}{(}\PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{bse} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2} \PY{o}{+} \PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{bse} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mf}{0.5}
-\PY{n}{z\PYZus{}scores} \PY{o}{=} \PY{n}{coef\PYZus{}diff} \PY{o}{/} \PY{n}{se\PYZus{}diff}
-\PY{n}{p\PYZus{}values} \PY{o}{=} \PY{l+m+mi}{2} \PY{o}{*} \PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{stats}\PY{o}{.}\PY{n}{norm}\PY{o}{.}\PY{n}{cdf}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{z\PYZus{}scores}\PY{p}{)}\PY{p}{)}\PY{p}{)}
-
-\PY{n}{academic\PYZus{}comparison\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Variable}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{coef\PYZus{}diff}\PY{o}{.}\PY{n}{index}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Coef\PYZus{}Diff}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{coef\PYZus{}diff}\PY{o}{.}\PY{n}{values}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Z\PYZhy{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{z\PYZus{}scores}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{P\PYZhy{}Value}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{p\PYZus{}values}
-\PY{p}{\PYZcb{}}\PY{p}{)}
-
-\PY{n}{academic\PYZus{}comparison\PYZus{}df}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coef\PYZus{}Diff}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{abs}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
-\end{Verbatim}
-\end{tcolorbox}
-
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{22}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-                       Variable  Coef\_Diff   Z-Score       P-Value
-4           Mental\_Health\_Score  -0.290282 -5.083225  3.710797e-07
-5   Conflicts\_Over\_Social\_Media   0.122512  1.736538  8.246870e-02
-2         Avg\_Daily\_Usage\_Hours  -0.103668 -2.283686  2.238998e-02
-1                           Age   0.067123  2.066999  3.873425e-02
-7    Academic\_Level\_High School  -0.061986 -0.265946  7.902806e-01
-0                         const  -0.051194 -0.070495  9.437999e-01
-8  Academic\_Level\_Undergraduate   0.033063  0.129145  8.972426e-01
-6       Academic\_Level\_Graduate  -0.022270 -0.071557  9.429542e-01
-3         Sleep\_Hours\_Per\_Night   0.018388  0.397040  6.913379e-01
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{23}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-\PY{n+nb}{print}\PY{p}{(}\PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{pvalues}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{            }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{pvalues}\PY{p}{)}
+\PY{n}{diag} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{test}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Jarque\PYZhy{}Bera (정규성)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Breusch\PYZhy{}Pagan (등분산)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{White (등분산)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+             \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Ramsey RESET p3 (함수형태)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Durbin\PYZhy{}Watson (자기상관)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{statistic}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{jb\PYZus{}stat}\PY{p}{,} \PY{n}{bp}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{white}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n+nb}{float}\PY{p}{(}\PY{n}{reset}\PY{o}{.}\PY{n}{fvalue}\PY{p}{)}\PY{p}{,} \PY{n}{durbin\PYZus{}watson}\PY{p}{(}\PY{n}{final\PYZus{}ols}\PY{o}{.}\PY{n}{resid}\PY{p}{)}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{p\PYZus{}value}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{jb\PYZus{}p}\PY{p}{,} \PY{n}{bp}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{white}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n+nb}{float}\PY{p}{(}\PY{n}{reset}\PY{o}{.}\PY{n}{pvalue}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{nan}\PY{p}{]}\PY{p}{,}
+\PY{p}{\PYZcb{}}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{diag}\PY{o}{.}\PY{n}{to\PYZus{}string}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{왜도=}\PY{l+s+si}{\PYZob{}}\PY{n}{skew}\PY{l+s+si}{:}\PY{l+s+s2}{.3f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, 첨도=}\PY{l+s+si}{\PYZob{}}\PY{n}{kurt}\PY{l+s+si}{:}\PY{l+s+s2}{.3f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{  (n=}\PY{l+s+si}{\PYZob{}}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-const                           7.952805e-28
-Age                             5.471261e-01
-Avg\_Daily\_Usage\_Hours           7.172933e-01
-Sleep\_Hours\_Per\_Night           2.963692e-04
-Mental\_Health\_Score             1.690386e-41
-Conflicts\_Over\_Social\_Media     3.619284e-20
-Academic\_Level\_Graduate         5.186221e-19
-Academic\_Level\_High School      6.484018e-28
-Academic\_Level\_Undergraduate    1.385404e-24
-dtype: float64
+                  test  statistic  p\_value
+     Jarque-Bera (정규성)    44.8148   0.0000
+   Breusch-Pagan (등분산)    12.4985   0.0059
+           White (등분산)    25.4243   0.0025
+Ramsey RESET p3 (함수형태)    61.9476   0.0000
+  Durbin-Watson (자기상관)     2.0736      NaN
 
-const                           4.150602e-62
-Age                             9.723855e-03
-Avg\_Daily\_Usage\_Hours           2.278103e-04
-Sleep\_Hours\_Per\_Night           1.494453e-12
-Mental\_Health\_Score             1.984330e-42
-Conflicts\_Over\_Social\_Media     6.609827e-26
-Academic\_Level\_Graduate         5.062354e-46
-Academic\_Level\_High School      9.975119e-74
-Academic\_Level\_Undergraduate    9.522075e-60
+왜도=0.413, 첨도=3.919  (n=704)
+    \end{Verbatim}
+
+    \begin{itemize}
+\tightlist
+\item
+  \textbf{정규성}: Jarque-Bera 기각. 다만 왜도 ≈ 0.4, 첨도 ≈ 3.9로
+  편차가 경미하고, n ≈ 700에서 중심극한정리에 의해 계수 추정량의
+  표집분포는 근사적으로 정규다. 아래 로버스트 회귀·순서형 로지스틱과
+  비교해 추론이 안정적임을 확인한다.
+\item
+  \textbf{등분산}: Breusch-Pagan / White가 유의하면 이분산이 존재하므로,
+  위에서 이미 \textbf{HC3 강건 표준오차}를 기본으로 사용했다. (원
+  보고서는 등분산 검정 없이 그림만으로 ``등분산 만족''이라 서술했고
+  비강건 SE를 썼다.)
+\item
+  \textbf{함수형태}: RESET 검정으로 누락된 비선형항 여부 점검.
+\end{itemize}
+
+    \hypertarget{uxc601uxd5a5uxad00uxce21uxce58-uxbbfcuxac10uxb3c4-uxbd84uxc11d}{%
+\subsubsection{3. 영향관측치 민감도
+분석}\label{uxc601uxd5a5uxad00uxce21uxce58-uxbbfcuxac10uxb3c4-uxbd84uxc11d}}
+
+Cook's D 4/n 초과 관측치를 제거하고 재적합하여 계수가 크게 바뀌는지
+확인한다.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{infl} \PY{o}{=} \PY{n}{final\PYZus{}ols}\PY{o}{.}\PY{n}{get\PYZus{}influence}\PY{p}{(}\PY{p}{)}
+\PY{n}{cooks\PYZus{}d} \PY{o}{=} \PY{n}{infl}\PY{o}{.}\PY{n}{cooks\PYZus{}distance}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n}{thr} \PY{o}{=} \PY{l+m+mi}{4} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)}
+\PY{n}{high\PYZus{}idx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{n}{cooks\PYZus{}d} \PY{o}{\PYZgt{}} \PY{n}{thr}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cook}\PY{l+s+s2}{\PYZsq{}}\PY{l+s+s2}{s D \PYZgt{} 4/n 관측치 수: }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{len}\PY{p}{(}\PY{n}{high\PYZus{}idx}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ (}\PY{l+s+si}{\PYZob{}}\PY{n+nb}{len}\PY{p}{(}\PY{n}{high\PYZus{}idx}\PY{p}{)}\PY{o}{/}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)}\PY{l+s+si}{:}\PY{l+s+s2}{.1\PYZpc{}}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{trimmed} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{n}{df}\PY{o}{.}\PY{n}{index}\PY{p}{[}\PY{n}{high\PYZus{}idx}\PY{p}{]}\PY{p}{)}
+\PY{n}{final\PYZus{}trim} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{final\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{trimmed}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{cov\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HC3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{compare\PYZus{}infl} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{full\PYZus{}HC3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{params}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{trimmed\PYZus{}HC3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}trim}\PY{o}{.}\PY{n}{params}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{abs\PYZus{}change}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{(}\PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{params} \PY{o}{\PYZhy{}} \PY{n}{final\PYZus{}trim}\PY{o}{.}\PY{n}{params}\PY{p}{)}\PY{o}{.}\PY{n}{abs}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+\PY{p}{\PYZcb{}}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}
+\PY{n}{compare\PYZus{}infl}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Cook's D > 4/n 관측치 수: 45 (6.4\%)
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                             full\_HC3  trimmed\_HC3  abs\_change
+Intercept                     10.2550      10.0027      0.2522
+Sleep\_Hours\_Per\_Night         -0.2192      -0.2256      0.0063
+Mental\_Health\_Score           -0.6789      -0.6550      0.0240
+Conflicts\_Over\_Social\_Media    0.6724       0.7250      0.0526
+\end{Verbatim}
+\end{tcolorbox}
+        
+    4/n 규칙은 매우 민감한 경험칙이라 다수 관측치가 걸리지만, 이들을 모두
+제거해도 계수 부호와 대략적 크기는 유지된다 → 결론이 소수 관측치에
+좌우되지 않는다.
+
+    \hypertarget{uxcd94uxc815-uxbc29uxbc95uxc5d0-uxb300uxd55c-uxbbfcuxac10uxb3c4-uxb85cuxbc84uxc2a4uxd2b8-uxd68cuxadc0-uxc21cuxc11cuxd615-uxb85cuxc9c0uxc2a4uxd2f1}{%
+\subsubsection{4. 추정 방법에 대한 민감도: 로버스트 회귀 · 순서형
+로지스틱}\label{uxcd94uxc815-uxbc29uxbc95uxc5d0-uxb300uxd55c-uxbbfcuxac10uxb3c4-uxb85cuxbc84uxc2a4uxd2b8-uxd68cuxadc0-uxc21cuxc11cuxd615-uxb85cuxc9c0uxc2a4uxd2f1}}
+
+종속 변수가 유계 순서형이라는 점, 잔차가 비정규라는 점을 고려하여 세
+가지 추정을 비교한다.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} (a) Huber 로버스트 회귀}
+\PY{n}{rlm} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{RLM}\PY{o}{.}\PY{n}{from\PYZus{}formula}\PY{p}{(}\PY{n}{final\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{M}\PY{o}{=}\PY{n}{sm}\PY{o}{.}\PY{n}{robust}\PY{o}{.}\PY{n}{norms}\PY{o}{.}\PY{n}{HuberT}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} (b) 순서형 로지스틱 회귀 (부호·유의성 비교용; 계수 스케일은 OLS와 직접 비교 불가)}
+\PY{n}{ord\PYZus{}endog} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{int}\PY{p}{)}
+\PY{n}{ord\PYZus{}exog} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}
+\PY{n}{ord\PYZus{}mod} \PY{o}{=} \PY{n}{OrderedModel}\PY{p}{(}\PY{n}{ord\PYZus{}endog}\PY{p}{,} \PY{n}{ord\PYZus{}exog}\PY{p}{,} \PY{n}{distr}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{logit}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{method}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bfgs}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{disp}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+
+\PY{n}{summary\PYZus{}methods} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{OLS\PYZus{}HC3\PYZus{}coef}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{params}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{OLS\PYZus{}HC3\PYZus{}p}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{final\PYZus{}hc3}\PY{o}{.}\PY{n}{pvalues}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RLM\PYZus{}coef}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{rlm}\PY{o}{.}\PY{n}{params}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RLM\PYZus{}p}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{rlm}\PY{o}{.}\PY{n}{pvalues}\PY{p}{,}
+\PY{p}{\PYZcb{}}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{summary\PYZus{}methods}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{순서형 로지스틱 (기울기 계수만):}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{ord\PYZus{}mod}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{ord\PYZus{}mod}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                             OLS\_HC3\_coef  OLS\_HC3\_p  RLM\_coef  RLM\_p
+Intercept                         10.2550        0.0   10.0487    0.0
+Sleep\_Hours\_Per\_Night             -0.2192        0.0   -0.2202    0.0
+Mental\_Health\_Score               -0.6789        0.0   -0.6592    0.0
+Conflicts\_Over\_Social\_Media        0.6724        0.0    0.7011    0.0
+
+순서형 로지스틱 (기울기 계수만):
+Sleep\_Hours\_Per\_Night         -1.8284
+Mental\_Health\_Score           -5.2058
+Conflicts\_Over\_Social\_Media    5.6918
+dtype: float64
+Sleep\_Hours\_Per\_Night          0.0
+Mental\_Health\_Score            0.0
+Conflicts\_Over\_Social\_Media    0.0
 dtype: float64
     \end{Verbatim}
+
+    세 방법 모두에서 \textbf{부호가 동일}하고(\texttt{Mental\_Health} −,
+\texttt{Conflicts} +, \texttt{Sleep} −) 세 변수 모두 p \textless{}
+0.001로 유의하다. OLS 근사가 이 데이터에서 정성적 결론을 왜곡하지 않음을
+확인한다.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{uxd558uxc704uxc9d1uxb2e8-uxbd84uxc11d}{%
+\subsection{하위집단 분석}\label{uxd558uxc704uxc9d1uxb2e8-uxbd84uxc11d}}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
 \prompt{In}{incolor}{24}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PY{n}{academic\PYZus{}report\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Group}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM Group 0}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{GMM Group 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sample Size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{group0}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{group1}\PY{p}{)}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{R\PYZhy{}squared}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{rsquared}\PY{p}{,} \PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{rsquared}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflict Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{High School Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Academic\PYZus{}Level\PYZus{}High School}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Academic\PYZus{}Level\PYZus{}High School}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Undergraduate Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Academic\PYZus{}Level\PYZus{}Undergraduate}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Academic\PYZus{}Level\PYZus{}Undergraduate}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}\PY{p}{,}
-    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Graduate Coef}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{p}{[}\PY{n}{academic\PYZus{}model0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Academic\PYZus{}Level\PYZus{}Graduate}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{academic\PYZus{}model1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Academic\PYZus{}Level\PYZus{}Graduate}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{]}
-\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{gmm\PYZus{}y} \PY{o}{=} \PY{n}{GaussianMixture}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{,} \PY{n}{n\PYZus{}init}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{)}
+\PY{n}{grp} \PY{o}{=} \PY{n}{gmm\PYZus{}y}\PY{o}{.}\PY{n}{fit\PYZus{}predict}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+\PY{k}{if} \PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{grp} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{grp} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{grp} \PY{o}{=} \PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{grp}
+\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZus{}gmm\PYZus{}y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{grp}
+\PY{n}{n0} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{p}{(}\PY{n}{grp} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n}{VAR} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}
 
-\PY{n}{academic\PYZus{}report\PYZus{}df}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{split\PYZus{}ztest}\PY{p}{(}\PY{n}{mask0}\PY{p}{)}\PY{p}{:}
+    \PY{n}{m0} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{final\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{mask0}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+    \PY{n}{m1} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{final\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{o}{\PYZti{}}\PY{n}{mask0}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+    \PY{n}{z} \PY{o}{=} \PY{p}{(}\PY{n}{m0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{n}{VAR}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{m1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{n}{VAR}\PY{p}{]}\PY{p}{)} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{m0}\PY{o}{.}\PY{n}{bse}\PY{p}{[}\PY{n}{VAR}\PY{p}{]} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2} \PY{o}{+} \PY{n}{m1}\PY{o}{.}\PY{n}{bse}\PY{p}{[}\PY{n}{VAR}\PY{p}{]} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}
+    \PY{n}{p} \PY{o}{=} \PY{l+m+mi}{2} \PY{o}{*} \PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{stats}\PY{o}{.}\PY{n}{norm}\PY{o}{.}\PY{n}{cdf}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{z}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+    \PY{k}{return} \PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{mask0}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{var}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{o}{\PYZti{}}\PY{n}{mask0}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{var}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+            \PY{n}{m0}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{n}{VAR}\PY{p}{]}\PY{p}{,} \PY{n}{m1}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{n}{VAR}\PY{p}{]}\PY{p}{,} \PY{n}{z}\PY{p}{,} \PY{n}{p}\PY{p}{)}
+
+\PY{n}{gmm\PYZus{}res} \PY{o}{=} \PY{n}{split\PYZus{}ztest}\PY{p}{(}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZus{}gmm\PYZus{}y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{)}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{rand\PYZus{}p}\PY{p}{,} \PY{n}{rand\PYZus{}absdiff} \PY{o}{=} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{\PYZus{}} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{200}\PY{p}{)}\PY{p}{:}
+    \PY{n}{m} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{bool}\PY{p}{)}
+    \PY{n}{m}\PY{p}{[}\PY{n}{rng}\PY{o}{.}\PY{n}{permutation}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{df}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{p}{:}\PY{n}{n0}\PY{p}{]}\PY{p}{]} \PY{o}{=} \PY{k+kc}{True}
+    \PY{n}{r} \PY{o}{=} \PY{n}{split\PYZus{}ztest}\PY{p}{(}\PY{n}{m}\PY{p}{)}
+    \PY{n}{rand\PYZus{}p}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{r}\PY{p}{[}\PY{l+m+mi}{5}\PY{p}{]}\PY{p}{)}
+    \PY{n}{rand\PYZus{}absdiff}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{r}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{r}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{[GMM(Y) 분할]  Var(Y): }\PY{l+s+si}{\PYZob{}}\PY{n}{gmm\PYZus{}res}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{l+s+si}{:}\PY{l+s+s2}{.2f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ / }\PY{l+s+si}{\PYZob{}}\PY{n}{gmm\PYZus{}res}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{l+s+si}{:}\PY{l+s+s2}{.2f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{   }\PY{l+s+s2}{\PYZdq{}}
+      \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{beta(}\PY{l+s+si}{\PYZob{}}\PY{n}{VAR}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{): }\PY{l+s+si}{\PYZob{}}\PY{n}{gmm\PYZus{}res}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{l+s+si}{:}\PY{l+s+s2}{.3f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ / }\PY{l+s+si}{\PYZob{}}\PY{n}{gmm\PYZus{}res}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{l+s+si}{:}\PY{l+s+s2}{.3f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{   z=}\PY{l+s+si}{\PYZob{}}\PY{n}{gmm\PYZus{}res}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{l+s+si}{:}\PY{l+s+s2}{.2f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{  p=}\PY{l+s+si}{\PYZob{}}\PY{n}{gmm\PYZus{}res}\PY{p}{[}\PY{l+m+mi}{5}\PY{p}{]}\PY{l+s+si}{:}\PY{l+s+s2}{.2e}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{[무작위 분할 200회]  전체 Var(Y)=}\PY{l+s+si}{\PYZob{}}\PY{n}{df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Addicted\PYZus{}Score}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{var}\PY{p}{(}\PY{p}{)}\PY{l+s+si}{:}\PY{l+s+s2}{.2f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{  }\PY{l+s+s2}{\PYZdq{}}
+      \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{평균 |beta 차|=}\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{rand\PYZus{}absdiff}\PY{p}{)}\PY{l+s+si}{:}\PY{l+s+s2}{.3f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{  }\PY{l+s+s2}{\PYZdq{}}
+      \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{계수차가 p\PYZlt{}.05로 유의한 비율=}\PY{l+s+si}{\PYZob{}}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{rand\PYZus{}p}\PY{p}{)}\PY{+w}{ }\PY{o}{\PYZlt{}}\PY{+w}{ }\PY{l+m+mf}{0.05}\PY{p}{)}\PY{l+s+si}{:}\PY{l+s+s2}{.1\PYZpc{}}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
-            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
-\prompt{Out}{outcolor}{24}{\boxspacing}
-\begin{Verbatim}[commandchars=\\\{\}]
-         Group  Sample Size  R-squared  Mental\_Health Coef  Sleep\_Hours Coef  \textbackslash{}
-0  GMM Group 0          236   0.824573           -0.784252         -0.148005
-1  GMM Group 1          469   0.864628           -0.493970         -0.166393
+    \begin{Verbatim}[commandchars=\\\{\}]
+[GMM(Y) 분할]  Var(Y): 0.41 / 0.74   beta(Mental\_Health\_Score): -0.768 / -0.533
+z=-4.22  p=2.48e-05
+[무작위 분할 200회]  전체 Var(Y)=2.52  평균 |beta 차|=0.058  계수차가 p<.05로 유의한 비율=5.0\%
+    \end{Verbatim}
 
-   Conflict Coef  High School Coef  Undergraduate Coef  Graduate Coef
-0       0.581765          2.529172            2.534003       2.584873
-1       0.459253          2.591158            2.500940       2.607143
-\end{Verbatim}
-\end{tcolorbox}
-        
-    \subsubsection{4. 학업 수준(Academic Level) 포함 회귀 분석
-결과}\label{uxd559uxc5c5-uxc218uxc900academic-level-uxd3ecuxd568-uxd68cuxadc0-uxbd84uxc11d-uxacb0uxacfc}
+    \textbf{결과 해석}
 
 \begin{itemize}
 \tightlist
 \item
-  학업 수준(고등학생, 학부생, 대학원생)에 따른 중독 점수 영향력 차이는
-  미미
+  \textbf{GMM(Y) 분할}: 두 그룹의 \texttt{Var(Addicted\_Score)}가
+  전체(≈2.5)에서 ≈0.4 / ≈0.7로 급감하고, 정신건강 계수 차이가 원
+  보고서처럼 ``유의''(p ≪ 0.05)하게 나온다.
 \item
-  그러나 정신건강 점수의 영향력은 낮은 중독 그룹에서 여전히 더 강하게
-  나타남
+  \textbf{무작위 분할 200회}: 각 조각의 Y 분산은 전체와 같고, 계수
+  차이가 p \textless{} 0.05로 유의한 비율은 \textbf{약 5\%}(우연 수준)에
+  그친다.
 \end{itemize}
+
+    \hypertarget{uxc815uxc815-1-uxc0c1uxd638uxc791uxc6a9uxc870uxc808uxd6a8uxacfc-uxbaa8uxd615}{%
+\subsubsection{정정 1 --- 상호작용(조절효과)
+모형}\label{uxc815uxc815-1-uxc0c1uxd638uxc791uxc6a9uxc870uxc808uxd6a8uxacfc-uxbaa8uxd615}}
+
+하위표본을 나눠 계수를 사후 비교하는 대신, \textbf{전체 표본에 하나의
+모형}을 적합하고 \texttt{그룹\ ×\ 예측변수} 상호작용항의 유의성을
+검정한다(Chow/Wald 검정). 그룹은 종속 변수가 아니라 \textbf{개념적으로
+구분되는 변수}(\texttt{Affects\_Academic\_Performance}: SNS가 학업에
+영향을 준다고 인식하는지)로 설정한다. 상호작용 유의확률은
+Benjamini-Hochberg로 다중비교 보정한다.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{inter\PYZus{}formula} \PY{o}{=} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score \PYZti{} C(Affects\PYZus{}Academic\PYZus{}Performance) * }\PY{l+s+s2}{\PYZdq{}}
+                 \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{(Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night + Mental\PYZus{}Health\PYZus{}Score + Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{inter} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{n}{inter\PYZus{}formula}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{cov\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HC3}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{inter}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:         Addicted\_Score   R-squared:                       0.956
+Model:                            OLS   Adj. R-squared:                  0.956
+Method:                 Least Squares   F-statistic:                     2118.
+Date:                Thu, 10 Sep 2026   Prob (F-statistic):               0.00
+Time:                        16:05:02   Log-Likelihood:                -223.62
+No. Observations:                 704   AIC:                             463.2
+Df Residuals:                     696   BIC:                             499.7
+Df Model:                           7
+Covariance Type:                  HC3
+================================================================================
+======================================================
+                                                                         coef
+std err          z      P>|z|      [0.025      0.975]
+--------------------------------------------------------------------------------
+------------------------------------------------------
+Intercept                                                             11.2389
+0.411     27.350      0.000      10.433      12.044
+C(Affects\_Academic\_Performance)[T.Yes]                                -1.1142
+0.604     -1.846      0.065      -2.297       0.069
+Sleep\_Hours\_Per\_Night                                                 -0.1808
+0.042     -4.325      0.000      -0.263      -0.099
+C(Affects\_Academic\_Performance)[T.Yes]:Sleep\_Hours\_Per\_Night          -0.0438
+0.047     -0.937      0.349      -0.135       0.048
+Mental\_Health\_Score                                                   -0.8457
+0.063    -13.466      0.000      -0.969      -0.723
+C(Affects\_Academic\_Performance)[T.Yes]:Mental\_Health\_Score             0.3106
+0.072      4.317      0.000       0.170       0.452
+Conflicts\_Over\_Social\_Media                                            0.5884
+0.066      8.876      0.000       0.458       0.718
+C(Affects\_Academic\_Performance)[T.Yes]:Conflicts\_Over\_Social\_Media    -0.0836
+0.089     -0.937      0.349      -0.258       0.091
+==============================================================================
+Omnibus:                       71.259   Durbin-Watson:                   2.093
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              139.868
+Skew:                           0.619   Prob(JB):                     4.25e-31
+Kurtosis:                       4.798   Cond. No.                         578.
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC3)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{inter\PYZus{}terms} \PY{o}{=} \PY{p}{[}\PY{n}{p} \PY{k}{for} \PY{n}{p} \PY{o+ow}{in} \PY{n}{inter}\PY{o}{.}\PY{n}{params}\PY{o}{.}\PY{n}{index} \PY{k}{if} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{:}\PY{l+s+s2}{\PYZdq{}} \PY{o+ow}{in} \PY{n}{p}\PY{p}{]}
+\PY{n}{inter\PYZus{}p} \PY{o}{=} \PY{n}{inter}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{n}{inter\PYZus{}terms}\PY{p}{]}
+\PY{n}{inter\PYZus{}out} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{term}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{inter\PYZus{}terms}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{coef}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{inter}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{n}{inter\PYZus{}terms}\PY{p}{]}\PY{o}{.}\PY{n}{values}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HC3\PYZus{}p}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{inter\PYZus{}p}\PY{o}{.}\PY{n}{values}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{BH\PYZus{}p}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{bh\PYZus{}adjust}\PY{p}{(}\PY{n}{inter\PYZus{}p}\PY{o}{.}\PY{n}{values}\PY{p}{)}\PY{p}{,}
+\PY{p}{\PYZcb{}}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{inter\PYZus{}out}\PY{o}{.}\PY{n}{to\PYZus{}string}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+                                                              term    coef
+HC3\_p   BH\_p
+      C(Affects\_Academic\_Performance)[T.Yes]:Sleep\_Hours\_Per\_Night -0.0438
+0.3487 0.3487
+        C(Affects\_Academic\_Performance)[T.Yes]:Mental\_Health\_Score  0.3106
+0.0000 0.0000
+C(Affects\_Academic\_Performance)[T.Yes]:Conflicts\_Over\_Social\_Media -0.0836
+0.3485 0.3487
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 그룹 전체 상호작용에 대한 결합(omnibus) Wald 검정}
+\PY{n}{joint} \PY{o}{=} \PY{n}{inter}\PY{o}{.}\PY{n}{wald\PYZus{}test}\PY{p}{(}\PY{n}{inter\PYZus{}terms}\PY{p}{,} \PY{n}{scalar}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{상호작용 결합 Wald 검정: F ≈ }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{float}\PY{p}{(}\PY{n}{joint}\PY{o}{.}\PY{n}{statistic}\PY{p}{)}\PY{l+s+si}{:}\PY{l+s+s2}{.3f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, p ≈ }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{float}\PY{p}{(}\PY{n}{joint}\PY{o}{.}\PY{n}{pvalue}\PY{p}{)}\PY{l+s+si}{:}\PY{l+s+s2}{.3e}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, df=}\PY{l+s+si}{\PYZob{}}\PY{n}{joint}\PY{o}{.}\PY{n}{df\PYZus{}denom}\PY{l+s+si}{:}\PY{l+s+s2}{.0f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+상호작용 결합 Wald 검정: F ≈ 48.912, p ≈ 1.362e-10, df=3
+    \end{Verbatim}
+
+    상호작용 항의 결합 검정으로 ``연관의 크기가 하위집단에 따라
+다른가''(H5)를 판단한다. 개별 상호작용은 BH 보정 후 유의확률로 해석한다.
+(합성 데이터에서 이 상호작용 역시 생성 규칙을 반영할 뿐이라는 점은 한계
+절에서 다시 밝힌다.)
+
+    \hypertarget{uxc815uxc815-2-uxc124uxba85uxbcc0uxc218-uxae30uxbc18-uxc7a0uxc7acuxd504uxb85cuxd30cuxc77c-uxbe44uxc9c0uxb3c4-uxd558uxc704uxc9d1uxb2e8}{%
+\subsubsection{정정 2 --- 설명변수 기반 잠재프로파일 (비지도
+하위집단)}\label{uxc815uxc815-2-uxc124uxba85uxbcc0uxc218-uxae30uxbc18-uxc7a0uxc7acuxd504uxb85cuxd30cuxc77c-uxbe44uxc9c0uxb3c4-uxd558uxc704uxc9d1uxb2e8}}
+
+굳이 비지도 군집을 쓰려면, \textbf{종속 변수를 제외한 표준화된
+설명변수}로 군집해야 한다. 이렇게 얻은 프로파일은 Y로 정의되지 않으므로,
+프로파일별 평균 \texttt{Addicted\_Score}를 비교하는 것은 순환이 아니다.
+군집 수 k는 \textbf{BIC}로 선택하고 분리도(entropy)를 함께 보고한다.
+
+주의: 이 데이터의 ``수치형'' 설명변수도 실제로는 소수의 이산값만
+취하므로(정신건강 6수준, 갈등 6수준 등), GMM의 BIC가 k를 늘릴수록 계속
+감소한다. 따라서 해석 가능성을 위해 \textbf{k ≤ 4로 제한}하고 그
+범위에서 BIC 최소를 택한다.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{prof\PYZus{}vars} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+             \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Age}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{Z} \PY{o}{=} \PY{n}{StandardScaler}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{n}{prof\PYZus{}vars}\PY{p}{]}\PY{p}{)}
+\PY{n}{K\PYZus{}MAX} \PY{o}{=} \PY{l+m+mi}{4}
+
+\PY{n}{lpa\PYZus{}rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{best} \PY{o}{=} \PY{k+kc}{None}
+\PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{7}\PY{p}{)}\PY{p}{:}
+    \PY{n}{gm} \PY{o}{=} \PY{n}{GaussianMixture}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{n}{k}\PY{p}{,} \PY{n}{covariance\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{full}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{,} \PY{n}{n\PYZus{}init}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{)}
+    \PY{n}{gm}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+    \PY{n}{bic} \PY{o}{=} \PY{n}{gm}\PY{o}{.}\PY{n}{bic}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+    \PY{k}{if} \PY{n}{k} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{:}
+        \PY{n}{ent} \PY{o}{=} \PY{l+m+mf}{0.0}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n}{pp} \PY{o}{=} \PY{n}{gm}\PY{o}{.}\PY{n}{predict\PYZus{}proba}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+        \PY{n}{ent} \PY{o}{=} \PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{pp} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{pp} \PY{o}{+} \PY{l+m+mf}{1e\PYZhy{}12}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{/} \PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{Z}\PY{p}{)} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{k}\PY{p}{)}\PY{p}{)}
+    \PY{n}{lpa\PYZus{}rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{k}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{BIC}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{bic}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{entropy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{ent}\PY{p}{\PYZcb{}}\PY{p}{)}
+    \PY{k}{if} \PY{n}{k} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{K\PYZus{}MAX} \PY{o+ow}{and} \PY{p}{(}\PY{n}{best} \PY{o+ow}{is} \PY{k+kc}{None} \PY{o+ow}{or} \PY{n}{bic} \PY{o}{\PYZlt{}} \PY{n}{best}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{:}
+        \PY{n}{best} \PY{o}{=} \PY{p}{(}\PY{n}{k}\PY{p}{,} \PY{n}{bic}\PY{p}{,} \PY{n}{gm}\PY{p}{)}
+\PY{n}{lpa\PYZus{}cmp} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{lpa\PYZus{}rows}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{lpa\PYZus{}cmp}\PY{o}{.}\PY{n}{to\PYZus{}string}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{k \PYZlt{}= }\PY{l+s+si}{\PYZob{}}\PY{n}{K\PYZus{}MAX}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ 범위에서 BIC 최소 k = }\PY{l+s+si}{\PYZob{}}\PY{n}{best}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+ k      BIC  entropy
+ 1  7435.95     0.00
+ 2  7223.10     0.78
+ 3  4064.84     1.00
+ 4  -769.11     0.94
+ 5 -1624.07     0.94
+ 6 -2830.46     1.00
+
+k <= 4 범위에서 BIC 최소 k = 4
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{best\PYZus{}k}\PY{p}{,} \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{best\PYZus{}gm} \PY{o}{=} \PY{n}{best}
+\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZus{}profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{best\PYZus{}gm}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+
+\PY{n}{prof\PYZus{}summary} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZus{}profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{agg}\PY{p}{(}
+    \PY{n}{n}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{size}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{n}{mean\PYZus{}Addicted}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{n}{mean\PYZus{}Usage}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Avg\PYZus{}Daily\PYZus{}Usage\PYZus{}Hours}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{n}{mean\PYZus{}Sleep}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Sleep\PYZus{}Hours\PYZus{}Per\PYZus{}Night}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{n}{mean\PYZus{}Mental}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mental\PYZus{}Health\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{n}{mean\PYZus{}Conflict}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Conflicts\PYZus{}Over\PYZus{}Social\PYZus{}Media}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{prof\PYZus{}summary}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} 프로파일 간 Addicted\PYZus{}Score 평균 차이 (기술적 ANOVA)}
+\PY{n}{groups} \PY{o}{=} \PY{p}{[}\PY{n}{g}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Addicted\PYZus{}Score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{g} \PY{o+ow}{in} \PY{n}{df}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZus{}profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{]}
+\PY{n}{f\PYZus{}stat}\PY{p}{,} \PY{n}{f\PYZus{}p} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{f\PYZus{}oneway}\PY{p}{(}\PY{o}{*}\PY{n}{groups}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{프로파일 간 Addicted\PYZus{}Score 평균차 ANOVA: F=}\PY{l+s+si}{\PYZob{}}\PY{n}{f\PYZus{}stat}\PY{l+s+si}{:}\PY{l+s+s2}{.2f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, p=}\PY{l+s+si}{\PYZob{}}\PY{n}{f\PYZus{}p}\PY{l+s+si}{:}\PY{l+s+s2}{.3e}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+            n  mean\_Addicted  mean\_Usage  mean\_Sleep  mean\_Mental  mean\_Conflict
+\_profile
+0         112           8.36        6.24        5.42         5.05           4.00
+1          96           4.80        3.76        8.16         7.65           2.35
+2         449           6.29        4.89        6.95         6.29           2.71
+3          47           6.57        4.38        6.89         5.60           2.40
+
+프로파일 간 Addicted\_Score 평균차 ANOVA: F=145.12, p=4.047e-73
+    \end{Verbatim}
+
+    프로파일은 사용시간·수면·정신건강·갈등 프로필이 다른 하위집단이며,
+프로파일별 평균 중독 점수 차이는 이 데이터의 설명변수-종속변수 관계를
+(순환 없이) 요약한다.
 
     \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{Conclusion}\label{conclusion}
+\hypertarget{uxc885uxd569-uxb2e4uxc911uxbe44uxad50-uxbcf4uxc815}{%
+\section{종합: 다중비교
+보정}\label{uxc885uxd569-uxb2e4uxc911uxbe44uxad50-uxbcf4uxc815}}
 
-\subsection{Research Summary}\label{research-summary}
+조절효과 분석에서 나온 상호작용 유의확률을 한데 모아 Benjamini-Hochberg
+FDR로 보정한 결과를 재확인한다(위 표의 \texttt{BH\_p}). 주 모형의 3개
+핵심 계수는 p \textless{} 1e-10 수준으로 어떤 보정에도 유의성이
+유지된다.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{limitations}{%
+\section{Limitations}\label{limitations}}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{정신 건강 점수}는 모든 분석에서 일관되게 소셜미디어 중독
-  점수에 가장 강력한 부적 영향력을 미침. 특히 중독 수준이 낮은 집단에서
-  그 영향력이 더욱 두드러짐.
+  \textbf{합성 데이터.} 자료는 Kaggle 공개 합성 데이터셋으로, 종속
+  변수가 설명 변수의 거의 결정론적 함수이며(704개 설명변수 조합이 모두
+  유일한 중독 점수에 대응), 상관·결정계수가 실제 행동과학 자료에서
+  관측되기 어려운 수준(R² ≈ 0.95)이다. \textbf{본 보고서의 모든
+  계수·유의성· 하위집단 차이는 이 데이터셋의 생성 구조에 대한 기술이며,
+  실제 학생 모집단으로 일반화되지 않는다.}
 \item
-  \textbf{SNS 관련 갈등 경험}은 중독 점수를 높이는 주요 요인으로
-  작용하며, 두 그룹 모두에서 정(+)의 영향력을 가짐.
+  \textbf{횡단면·관찰 자료.} 어떤 변수도 실험적으로 조작되지 않았으므로
+  인과 해석이 불가능하다. 역인과(중독 → 수면·정신건강 악화)와 미측정
+  교란이 모두 가능하다. 본문은 ``연관/상관'' 언어만 사용한다.
 \item
-  \textbf{수면 시간} 역시 중독 점수와 음의 상관관계를 가지며, 수면
-  부족이 중독 악화에 기여할 수 있음을 시사함.
+  \textbf{구성개념 순환.} \texttt{Conflicts\_Over\_Social\_Media},
+  \texttt{Avg\_Daily\_Usage\_Hours},
+  \texttt{Affects\_Academic\_Performance}는 중독 구성개념과 개념적으로
+  겹친다. 이들이 포함된 모형의 설명력은 부분적으로 동어반복이다.
 \item
-  \textbf{성별, 학업 수준, 플랫폼 종류 등은 일부 유의미하지만}, 정신
-  건강과 갈등 경험에 비해 상대적으로 영향력이 낮음.
+  \textbf{측정.} \texttt{Addicted\_Score}는 검증된 심리척도(예: BSMAS)가
+  아닌 2--9 정수 지표다. OLS는 유계 순서형 변수를 연속으로 근사하며(범위
+  밖 예측 가능), 본 보고서는 순서형 로지스틱· 로버스트 회귀로 정성적
+  결론의 안정성만 확인했다.
+\item
+  \textbf{표본추출.} 704명의 모집단·표집틀·응답률이 문서화되어 있지 않아
+  대표성을 평가할 수 없다.
+\item
+  \textbf{\texttt{Country}.} 110개 수준 중 다수가 관측치 1--2개로 식별이
+  불안정하여 주 모형에서 제외했다. 국가 효과 분석에는 지역 집계 또는
+  혼합효과 모형이 필요하다.
 \end{enumerate}
 
-\subsection{Theoretical implications}\label{theoretical-implications}
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+\hypertarget{uxc694uxc57d-uxc774-uxb370uxc774uxd130uxc14buxc5d0-uxd55cuxc815}{%
+\subsection{요약 (이 데이터셋에
+한정)}\label{uxc694uxc57d-uxc774-uxb370uxc774uxd130uxc14buxc5d0-uxd55cuxc815}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{정신 건강 점수}는 수면·갈등을 통제한 뒤에도 중독 점수와 가장
+  강한 \textbf{음의 연관}을 보이며 (표준화 β 기준 최대), HC3 강건
+  SE·로버스트 회귀·순서형 로지스틱에서 모두 p \textless{} 0.001로
+  일관된다.
+\item
+  \textbf{SNS 관련 갈등 경험}은 중독 점수와 강한 \textbf{양의 연관}을
+  보인다.
+\item
+  \textbf{수면 시간}은 중독 점수와 \textbf{음의 연관}을 보이나 효과
+  크기는 위 둘보다 작다.
+\item
+  \textbf{일일 사용 시간과 나이}는 단순 상관은 있으나 다른 변수 통제 시
+  \textbf{부분효과가 유의하지 않다} (H4 미지지). 성별·학업
+  수준·플랫폼·관계상태의 추가 설명력은 미미하다.
+\item
+  하위집단에 따른 연관 크기의 차이(H5)는 \textbf{상호작용 모형}으로
+  검정해야 하며, 원 보고서처럼 종속 변수로 군집을 만들어 하위표본 회귀를
+  비교하면 \textbf{범위 축소에 의한 인공적 계수 차이}가 발생한다.
+\end{enumerate}
+
+\hypertarget{uxbc29uxbc95uxb860uxc801-uxc2dcuxc0acuxc810}{%
+\subsection{방법론적
+시사점}\label{uxbc29uxbc95uxb860uxc801-uxc2dcuxc0acuxc810}}
 
 \begin{itemize}
 \tightlist
 \item
-  본 연구는 SNS 중독이 단순히 사용 시간에 의해서가 아니라,
-  \textbf{심리사회적 변수(정신 건강, 갈등, 수면)}와 밀접하게 연결되어
-  있음을 실증적으로 입증
+  하위집단/조절효과는 \textbf{하나의 모형 + 상호작용항(Chow 검정)}으로
+  다루고, 비지도 군집이 필요하면 \textbf{종속 변수를 제외한 설명변수}로
+  군집한다.
 \item
-  특히 \textbf{중독 경향이 낮은 집단}은 정신 건강과 수면에 민감하게
-  반응하므로, 이들에 대한 사전적 예방 조치가 효과적일 수 있음
-\end{itemize}
-
-\subsection{Suggestion}\label{suggestion}
-
-\begin{itemize}
-\tightlist
+  이분산 검정을 형식적으로 수행하고 \textbf{강건(HC3) 표준오차}를
+  기본값으로 삼는다.
 \item
-  \textbf{예방 중심 개입 전략 필요}: 정신 건강 취약 학생을 조기
-  발견하고, SNS 관련 갈등 조절 교육을 병행할 것
+  유계 순서형 종속 변수에는 \textbf{순서형 로지스틱을 민감도 분석}으로
+  병행한다.
 \item
-  \textbf{중독 고위험군}은 자기 인식 왜곡 경향이 있으므로, 행동 데이터
-  기반의 간접적 평가와 피드백 설계가 요구됨
+  ``가장 영향력 있는 요인''은 \textbf{표준화 계수}로 비교하고, 다수의
+  검정에는 \textbf{FDR 보정}을 적용한다.
 \item
-  \textbf{학생 대상 프로그램 설계 시}, 단일 요인(시간 차단 등)에만
-  의존하지 말고, 정서·관계적 요소를 복합적으로 고려할 것
+  변수 제거 근거(비유의 vs 다중공선성)를 구분해 명시하고, 모형 선택은
+  \textbf{AIC/BIC·교차검증}으로 정당화한다.
 \end{itemize}
 
 
